@@ -14,7 +14,9 @@ public partial class Clinic
 
     public virtual ICollection<AppointmentSlot> AppointmentSlots { get; set; } = new List<AppointmentSlot>();  
 
-    public virtual ICollection<MedicalStaff> MedicalStaff { get; set; } = new List<MedicalStaff>();
+    public virtual ICollection<MedicalEmployee> MedicalEmployees { get; set; } = new List<MedicalEmployee>();
 
-    public virtual ICollection<Doctor> DoctorS { get; set; } = new List<Doctor>();
+    public virtual ICollection<DoctorClinics> DoctorClinics { get; set; } = [];
+    public virtual ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
+    
 }

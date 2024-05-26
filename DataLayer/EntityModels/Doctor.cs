@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Identity;
+
 namespace DataLayer;
 
 public partial class Doctor
@@ -10,5 +12,8 @@ public partial class Doctor
     public virtual UserAccount UserAccount { get; set; } = null!;
 
     public virtual ICollection<AppointmentSlot> AppointmentSlots { get; set; } = new List<AppointmentSlot>();
-    public virtual ICollection<Clinic> Clinics { get; set; } = new List<Clinic>();
+
+    public virtual ICollection<DoctorClinics> DoctorClinics { get; set; } = new List<DoctorClinics>();
+    public virtual ICollection<Clinic> Clinics { get; set; } = [];
+    public virtual ICollection<Specialization> Specializations { get; set; } = [];
 }

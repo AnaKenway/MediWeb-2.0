@@ -3,7 +3,7 @@ using Services;
 
 namespace MediWeb.Services;
 
-public class DoctorWorksAtClinicService : BaseService<DoctorWorksAtClinic>
+public class DoctorWorksAtClinicService : BaseService<DoctorClinics>
 {
     public DoctorWorksAtClinicService(MediWebContext context)
         : base(context)

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DataLayer;
 
-public partial class MediWebContext : IdentityDbContext<IdentityUser>
+public partial class MediWebContext : IdentityDbContext<UserAccount, IdentityRole<long>, long>
 {
     public MediWebContext()
     {
@@ -25,22 +25,24 @@ public partial class MediWebContext : IdentityDbContext<IdentityUser>
 
     public virtual DbSet<Doctor> Doctors { get; set; }
 
-    public virtual DbSet<DoctorWorksAtClinic> DoctorWorksAtClinics { get; set; }
+    public virtual DbSet<DoctorClinics> DoctorClinics { get; set; }
 
-    public virtual DbSet<MedicalStaff> MedicalStaffs { get; set; }
+    public virtual DbSet<MedicalEmployee> MedicalStaffs { get; set; }
 
     public virtual DbSet<Patient> Patients { get; set; }
 
     public virtual DbSet<Specialization> Specializations { get; set; }
 
-    public virtual DbSet<UserAccount> UserAccounts { get; set; }
+    //public virtual DbSet<UserAccount> UserAccounts { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Database=mediweb;Username=postgres;Password=123");
+        => optionsBuilder.UseNpgsql("Host=localhost;Database=mediweb_code_first;Username=postgres;Password=123");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Admin>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("admin_pkey");
@@ -137,6 +139,10 @@ public partial class MediWebContext : IdentityDbContext<IdentityUser>
             entity.Property(e => e.WorkHours)
                 .HasMaxLength(200)
                 .HasColumnName("work_hours");
+
+            entity.HasMany(c => c.Doctors)
+                .WithMany(d => d.Clinics)
+                .UsingEntity<DoctorClinics>();
         });
 
         modelBuilder.Entity<Doctor>(entity =>
@@ -149,13 +155,24 @@ public partial class MediWebContext : IdentityDbContext<IdentityUser>
             entity.Property(e => e.Title)
                 .HasColumnType("character varying")
                 .HasColumnName("title");
+
+            entity.HasOne(d => d.UserAccount).WithOne(d => d.Doctor)
+                .HasConstraintName("doctor_user_account_fkey");
+
+            entity.HasMany(d => d.Clinics)
+                .WithMany(c => c.Doctors)
+                .UsingEntity<DoctorClinics>();
+
+            entity.HasMany(d => d.Specializations)
+                .WithMany(s => s.Doctors)
+                .UsingEntity<DoctorClinics>();
         });
 
-        modelBuilder.Entity<DoctorWorksAtClinic>(entity =>
+        modelBuilder.Entity<DoctorClinics>(entity =>
         {
-            entity.HasKey(e => new { e.DoctorId, e.ClinicId, e.SpecializationId }).HasName("doctor_works_at_clinic_pkey");
+            entity.HasKey(e => new { e.DoctorId, e.ClinicId, e.SpecializationId }).HasName("doctor_clinics_pkey");
 
-            entity.ToTable("doctor_works_at_clinic");
+            entity.ToTable("doctor_clinics");
 
             entity.Property(e => e.DoctorId).HasColumnName("doctor_id");
             entity.Property(e => e.ClinicId).HasColumnName("clinic_id");
@@ -163,44 +180,28 @@ public partial class MediWebContext : IdentityDbContext<IdentityUser>
             entity.Property(e => e.Note)
                 .HasMaxLength(500)
                 .HasColumnName("note");
-
-            entity.HasOne(d => d.Clinic).WithMany(p => p.DoctorS)
-                .HasForeignKey(d => d.ClinicId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("doctor_works_at_clinic_clinic_fkey");
-
-            entity.HasOne(d => d.Doctor).WithMany(p => p.Clinics)
-                .HasForeignKey(d => d.DoctorId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("doctor_works_at_clinic_doctor_fkey");
-
-            entity.HasOne(d => d.Specialization).WithMany(p => p.DoctorWorksAtClinics)
-                .HasForeignKey(d => d.SpecializationId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("doctor_works_at_clinic_specialization_fkey");
         });
 
-        modelBuilder.Entity<MedicalStaff>(entity =>
+        modelBuilder.Entity<MedicalEmployee>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("medical_staff_pkey");
+            entity.HasKey(e => e.Id).HasName("medical_employee_pkey");
 
-            entity.ToTable("medical_staff");
+            entity.ToTable("medical_employee");
 
-            entity.HasIndex(e => e.UserAccountId, "medical_staff_user_account_id_key").IsUnique();
+            entity.HasIndex(e => e.UserAccountId, "medical_employee_user_account_id_key").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ClinicId).HasColumnName("clinic_id");
             entity.Property(e => e.UserAccountId).HasColumnName("user_account_id");
 
-            entity.HasOne(d => d.Clinic).WithMany(p => p.MedicalStaff)
+            entity.HasOne(d => d.Clinic).WithMany(p => p.MedicalEmployees)
                 .HasForeignKey(d => d.ClinicId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("medical_staff_clinic_fkey");
+                .HasConstraintName("medical_employee_clinic_fkey");
 
-            entity.HasOne(d => d.UserAccount).WithOne(p => p.MedicalStaff)
-                .HasForeignKey<MedicalStaff>(d => d.UserAccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("medical_staff_user_account_fkey");
+            entity.HasOne(d => d.UserAccount).WithOne(p => p.MedicalEmployee)
+                .HasForeignKey<MedicalEmployee>(d => d.UserAccountId)
+                .HasConstraintName("medical_employee_user_account_fkey");
         });
 
         modelBuilder.Entity<Patient>(entity =>
@@ -226,7 +227,6 @@ public partial class MediWebContext : IdentityDbContext<IdentityUser>
 
             entity.HasOne(d => d.UserAccount).WithOne(p => p.Patient)
                 .HasForeignKey<Patient>(d => d.UserAccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("patient_user_account_fkey");
         });
 
@@ -237,33 +237,26 @@ public partial class MediWebContext : IdentityDbContext<IdentityUser>
             entity.ToTable("specialization");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Name)
-                .HasColumnType("character varying")
-                .HasColumnName("name");
+            entity.Property(e => e.SpecializationName)
+                .HasColumnName("specialization_name")
+                .HasColumnType("character varying");
         });
 
-        modelBuilder.Entity<UserAccount>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("user_account_pkey");
+        //modelBuilder.Entity<UserAccount>(entity =>
+        //{
+        //    entity.HasKey(e => e.Id).HasName("user_account_pkey");
 
-            entity.ToTable("user_account");
+        //    entity.ToTable("user_account");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
-            entity.Property(e => e.Email)
-                .HasMaxLength(100)
-                .HasColumnName("email");
-            entity.Property(e => e.FirstName)
-                .HasMaxLength(50)
-                .HasColumnName("first_name");
-            entity.Property(e => e.LastName)
-                .HasMaxLength(50)
-                .HasColumnName("last_name");
-            entity.Property(e => e.Password)
-                .HasMaxLength(500)
-                .HasColumnName("password");
-            entity.Property(e => e.UserType).HasColumnName("user_type");
-        });
+        //    entity.Property(e => e.CreatedDate).HasColumnName("created_date");
+        //    entity.Property(e => e.FirstName)
+        //        .HasMaxLength(50)
+        //        .HasColumnName("first_name");
+        //    entity.Property(e => e.LastName)
+        //        .HasMaxLength(50)
+        //        .HasColumnName("last_name");
+        //    entity.Property(e => e.UserType).HasColumnName("user_type");
+        //});
 
         OnModelCreatingPartial(modelBuilder);
     }
