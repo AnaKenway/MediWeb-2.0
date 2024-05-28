@@ -2,17 +2,20 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MediWeb.Models;
+using MediWeb.Services;
 
 namespace MediWeb.Controllers;
 public class AccountController : Controller
 {
     private readonly UserManager<UserAccount> _userManager;
     private readonly SignInManager<UserAccount> _signInManager;
+    private readonly PatientService _patientService;
 
-    public AccountController(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager)
+    public AccountController(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager, PatientService patientService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _patientService = patientService;
     }
 
     [HttpGet]
@@ -26,11 +29,16 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            var user = new UserAccount { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
+            var user = new UserAccount { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, 
+                LastName = model.LastName, CreatedDate = DateTime.UtcNow};
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
+                var patient = new Patient { Gender = model.Gender, Jmbg = model.Jmbg, DateOfBirth = model.DateOfBirth,
+                    PhoneNumber = model.PhoneNumber, UserAccount = user, UserAccountId = user.Id };
+                
+                await _patientService.AddAsync(patient);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }

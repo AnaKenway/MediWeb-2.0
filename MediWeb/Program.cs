@@ -1,4 +1,5 @@
 using DataLayer;
+using MediWeb.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,9 +11,17 @@ builder.Services.AddDbContext<MediWebContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<UserAccount>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<UserAccount>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedEmail = false;
+    })
     .AddEntityFrameworkStores<MediWebContext>();
 builder.Services.AddControllersWithViews();
+
+#region Services
+builder.Services.AddScoped<PatientService>();
+#endregion
 
 var app = builder.Build();
 
