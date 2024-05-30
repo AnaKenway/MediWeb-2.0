@@ -17,10 +17,18 @@ builder.Services.AddDefaultIdentity<UserAccount>(options =>
         options.SignIn.RequireConfirmedEmail = false;
     })
     .AddEntityFrameworkStores<MediWebContext>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 #region Services
 builder.Services.AddScoped<PatientService>();
+builder.Services.AddScoped<ClinicService>();
+builder.Services.AddScoped<DoctorService>();
+builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<AppointmentService>();
+builder.Services.AddScoped<AppointmentSlotService>();
+builder.Services.AddScoped<DoctorWorksAtClinicService>();
+builder.Services.AddScoped<MedicalEmployeeService>();
+builder.Services.AddScoped<SpecializationService>();
 #endregion
 
 var app = builder.Build();

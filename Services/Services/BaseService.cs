@@ -41,10 +41,28 @@ public class BaseService<T> where T : class
     }
 
 
-    public virtual async Task DeleteAsync(T entity)
+    public virtual async Task<bool> DeleteAsync(T entity)
     {
         _set.Remove(entity);
-        await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+        if(result > 0) 
+        { 
+            return true; 
+        }
+        return false;
+    }
+
+    public virtual async Task<bool> DeleteAsync(long id)
+    {
+        var entity = await _set.FindAsync(id) 
+            ?? throw new Exception("Cannot delete the object with Id " +  id + "because the object with that Id could not be found.");
+        _set.Remove(entity);
+        var result = await _context.SaveChangesAsync();
+        if (result > 0)
+        {
+            return true;
+        }
+        return false;
     }
 
 }

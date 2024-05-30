@@ -1,0 +1,39 @@
+﻿@model DataLayer.Clinic
+
+@{
+    ViewData["Title"] = "Delete Clinic";
+}
+
+<h1 class="my-4">Delete Clinic</h1>
+
+<h4 class="mb-3">Are you sure you want to delete this?</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Address</dt>
+            <dd class="col-sm-9">@Model.Address</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Pib</dt>
+            <dd class="col-sm-9">@Model.Pib</dd>
+
+            <dt class="col-sm-3">Work Hours</dt>
+            <dd class="col-sm-9">@Model.WorkHours</dd>
+
+            <dt class="col-sm-3">Phone Number</dt>
+            <dd class="col-sm-9">@Model.PhoneNumber</dd>
+        </dl>
+        <form asp-action="Delete">
+            <div class="d-grid gap-2">
+                <input type="submit" value="Delete" class="btn btn-danger" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>

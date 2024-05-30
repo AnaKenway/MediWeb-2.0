@@ -35,4 +35,16 @@ public static class NullExtensionMethods
         if (value == null)
             throw new ArgumentException("The passed object is null.", nameof(value));
     }
+
+    public static void AssertIsNotNullOrZero(this long? value)
+    {
+        if (value ==null || value == 0)
+            throw new ArgumentException("The passed value is null or zero.");
+    }
+
+    public static void AssertIsNotZero(this long value)
+    {
+        if (value == 0)
+            throw new ArgumentException("The passed value is zero.");
+    }
 }
