@@ -1,5 +1,4 @@
-﻿using Common;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MediWeb.Models;
 

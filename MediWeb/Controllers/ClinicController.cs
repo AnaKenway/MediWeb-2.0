@@ -2,7 +2,6 @@
 using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using MediWeb.Services;
-using Common;
 
 namespace MediWeb.Controllers
 {
@@ -45,11 +44,6 @@ namespace MediWeb.Controllers
         // GET: Clinic/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var clinic = await _clinicService.GetByIdAsync((long)id);
 
             if (clinic == null)
@@ -87,8 +81,6 @@ namespace MediWeb.Controllers
         // GET: Clinic/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            id.AssertIsNotNullOrZero();
-
             var clinic = await _clinicService.GetByIdAsync((long)id);
             if (clinic == null)
             {
