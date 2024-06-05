@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-
+﻿
 namespace MediWeb.Models;
 
 public class MedicalEmployeeDetailsViewModel
@@ -9,7 +8,7 @@ public class MedicalEmployeeDetailsViewModel
     public string LastName { get; set; }
     public string Email { get; set; }
     public string ClinicName { get; set; }
-    public string ClinicId { get; set; }
+    public long ClinicId { get; set; }
 
     public string FullName { get => FirstName + " " + LastName; }
 }

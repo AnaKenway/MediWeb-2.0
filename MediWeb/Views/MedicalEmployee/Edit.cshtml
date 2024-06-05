@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Edit">
+        <form asp-action="Edit" method="post">
             <div class="mb-3">
                 <label asp-for="FirstName" class="form-label"></label>
                 <input asp-for="FirstName" class="form-control" />
@@ -30,11 +30,6 @@
                 <label asp-for="ClinicName" class="form-label"></label>
                 <input asp-for="ClinicName" class="form-control" />
                 <span asp-validation-for="ClinicName" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="ClinicId" class="form-label"></label>
-                <input asp-for="ClinicId" class="form-control" />
-                <span asp-validation-for="ClinicId" class="text-danger"></span>
             </div>
             <div class="d-grid gap-2">
                 <input type="submit" value="Save" class="btn btn-primary" />
