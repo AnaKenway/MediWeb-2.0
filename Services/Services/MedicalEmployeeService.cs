@@ -1,5 +1,7 @@
 ﻿using Common;
 using DataLayer;
+using DTOs.UserAccountDTOs;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Services;
 
@@ -7,9 +9,12 @@ namespace MediWeb.Services;
 
 public class MedicalEmployeeService : BaseService<MedicalEmployee>
 {
-    public MedicalEmployeeService(MediWebContext context)
+    private readonly UserManager<UserAccount> _userManager;
+
+    public MedicalEmployeeService(MediWebContext context, UserManager<UserAccount> userManager)
         : base(context)
     {
+        _userManager = userManager;
     }
     public override async Task<IList<MedicalEmployee>> GetAllAsync()
     {
@@ -29,5 +34,33 @@ public class MedicalEmployeeService : BaseService<MedicalEmployee>
             .Include(me => me.UserAccount)
             .FirstOrDefaultAsync(me => me.Id == id) ??
             throw new MediWebClientException(MediWebFeature.CRUD, "Object with given Id doesn't exist.");
+    }
+
+    public async Task<MedicalEmployee> RegisterMedicalEmployeeAccount(MedicalEmployeeDetailsDTO medicalEmployeeDetails, string password)
+    {
+        var user = new UserAccount
+        {
+            UserName = medicalEmployeeDetails.Email,
+            Email = medicalEmployeeDetails.Email,
+            FirstName = medicalEmployeeDetails.FirstName,
+            LastName = medicalEmployeeDetails.LastName,
+            CreatedDate = DateTime.UtcNow
+        };
+
+        var identityResult = await _userManager.CreateAsync(user, password);
+
+        if(!identityResult.Succeeded) 
+        {
+            throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
+        }
+
+        var medicalEmployee = new MedicalEmployee
+        {
+            ClinicId = medicalEmployeeDetails.ClinicId,
+            UserAccountId = user.Id
+        };
+
+        return await AddAsync(medicalEmployee);
+ 
     }
 }

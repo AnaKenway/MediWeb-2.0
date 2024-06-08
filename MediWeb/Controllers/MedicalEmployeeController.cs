@@ -10,10 +10,6 @@ namespace MediWeb.Controllers
 {
     public class MedicalEmployeeController : Controller
     {
-        //Here, we will bind and get data from RegisterMedicalEmployeeViewModel and MedicalEmployeeDetails model
-        //and we convert them to the DTOs that are then sent to the Service layers, and then in the service layers,
-        //we can finally transform them to the Entity model and manipulate the data
-        //Simialrly when returning data, we transform from EntityModel to the DTOs first, and lastly to View model
         private readonly MedicalEmployeeService _medicalEmployeeService;
         private readonly ClinicService _clinicService;
         private readonly UserManager<UserAccount> _userManager;
@@ -29,15 +25,7 @@ namespace MediWeb.Controllers
         public async Task<IActionResult> Index()
         {
             var medicalEmployees = await _medicalEmployeeService.GetAllAsync();
-            var medicalEmployeesDetails = medicalEmployees.Select(me => new MedicalEmployeeDetailsViewModel
-            {
-                Id = me.Id,
-                ClinicId = me.ClinicId,
-                ClinicName = me.Clinic.Name,
-                FirstName = me.UserAccount.FirstName,
-                LastName = me.UserAccount.LastName,
-                Email = me.UserAccount.Email
-            });
+            var medicalEmployeesDetails = medicalEmployees.Select(me => MedicalEmployeeDetailsViewModel.CreateViewModelFromEntityModel(me));
             return View(medicalEmployeesDetails);
         }
 
@@ -73,27 +61,11 @@ namespace MediWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new UserAccount
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    CreatedDate = DateTime.UtcNow
-                };
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    var medicalEmployee = new MedicalEmployee
-                    {
-                        ClinicId = model.ClinicId,
-                        UserAccount = user,
-                        UserAccountId = user.Id
-                    };
-
-                    await _medicalEmployeeService.AddAsync(medicalEmployee);
-                    return RedirectToAction(nameof(Index));
-                }                             
+                var medicalEmployeeDto = model.CreateDTOFromViewModel();
+                var medicalEmployee = await _medicalEmployeeService.RegisterMedicalEmployeeAccount(medicalEmployeeDto, model.Password);
+                
+                await _medicalEmployeeService.AddAsync(medicalEmployee);
+                return RedirectToAction(nameof(Index));                            
             }
             var clinics = await _clinicService.GetAllAsync();
             ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name", model.ClinicId);
@@ -109,21 +81,17 @@ namespace MediWeb.Controllers
             }
 
             var medicalEmployee = await _medicalEmployeeService.GetByIdAsync(id.Value);
+
             if (medicalEmployee == null)
             {
                 return NotFound();
             }
+
             var clinics = await _medicalEmployeeService.GetAllAsync();
             ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name", medicalEmployee.ClinicId);
-            var medicalEmployeeDetails =new MedicalEmployeeDetailsViewModel
-            {
-                Id = medicalEmployee.Id,
-                ClinicId = medicalEmployee.ClinicId,
-                ClinicName = medicalEmployee.Clinic.Name,
-                FirstName = medicalEmployee.UserAccount.FirstName,
-                LastName = medicalEmployee.UserAccount.LastName,
-                Email = medicalEmployee.UserAccount.Email
-            };
+
+            var medicalEmployeeDetails = MedicalEmployeeDetailsViewModel.CreateViewModelFromEntityModel(medicalEmployee);
+
             return View(medicalEmployeeDetails);
         }
 
@@ -177,15 +145,7 @@ namespace MediWeb.Controllers
                 return NotFound();
             }
 
-            var medicalEmployeesDetails = new MedicalEmployeeDetailsViewModel
-            {
-                Id = medicalEmployee.Id,
-                ClinicId = medicalEmployee.ClinicId,
-                ClinicName = medicalEmployee.Clinic.Name,
-                FirstName = medicalEmployee.UserAccount.FirstName,
-                LastName = medicalEmployee.UserAccount.LastName,
-                Email = medicalEmployee.UserAccount.Email
-            };
+            var medicalEmployeesDetails = MedicalEmployeeDetailsViewModel.CreateViewModelFromEntityModel(medicalEmployee);
             return View(medicalEmployeesDetails);
         }
 
