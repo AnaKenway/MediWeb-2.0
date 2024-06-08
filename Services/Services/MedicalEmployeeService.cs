@@ -63,4 +63,20 @@ public class MedicalEmployeeService : BaseService<MedicalEmployee>
         return await AddAsync(medicalEmployee);
  
     }
+
+    public async Task<MedicalEmployee> Edit(MedicalEmployeeDetailsDTO medicalEmployeeDto)
+    {
+        var medicalEmployee = await GetByIdAsync(medicalEmployeeDto.Id);
+        medicalEmployee.ClinicId = medicalEmployeeDto.ClinicId;
+        medicalEmployee.UserAccount.FirstName = medicalEmployeeDto.FirstName;
+        medicalEmployee.UserAccount.LastName = medicalEmployeeDto.LastName;
+        medicalEmployee.UserAccount.Email = medicalEmployeeDto.Email;
+
+        var identityResult = await _userManager.UpdateAsync(medicalEmployee.UserAccount);
+        if(!identityResult.Succeeded) 
+        {
+            throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
+        }
+        return await UpdateAsync(medicalEmployee);        
+    }
 }

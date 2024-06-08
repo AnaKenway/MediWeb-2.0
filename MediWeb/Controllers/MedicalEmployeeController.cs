@@ -105,13 +105,8 @@ namespace MediWeb.Controllers
                 try
                 {
                     var id = medicalEmployeeDetails.Id;
-                    var medicalEmployee = await _medicalEmployeeService.GetByIdAsync(id);
-                    medicalEmployee.UserAccount.FirstName = medicalEmployeeDetails.FirstName;
-                    medicalEmployee.UserAccount.LastName = medicalEmployeeDetails.LastName;
-                    medicalEmployee.UserAccount.Email = medicalEmployeeDetails.Email;
-
-                    await _medicalEmployeeService.UpdateAsync(medicalEmployee);
-                    await _userManager.UpdateAsync(medicalEmployee.UserAccount);
+                    var medicalEmployeeDto = medicalEmployeeDetails.CreateDTOFromDetailsViewModel();
+                    var result =  await _medicalEmployeeService.Edit(medicalEmployeeDto);                  
                 }
                 catch (DbUpdateConcurrencyException)
                 {

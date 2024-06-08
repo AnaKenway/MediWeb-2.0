@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using DTOs.UserAccountDTOs;
 
 namespace MediWeb.Models;
 
@@ -23,6 +24,19 @@ public class MedicalEmployeeDetailsViewModel
             Email = medicalEmployee.UserAccount.Email,
             ClinicId = medicalEmployee.ClinicId,
             ClinicName = medicalEmployee.Clinic.Name
+        };
+    }
+
+    public MedicalEmployeeDetailsDTO CreateDTOFromDetailsViewModel()
+    {
+        return new MedicalEmployeeDetailsDTO
+        {
+             Id = this.Id,
+             FirstName = this.FirstName,
+             LastName = this.LastName,
+             Email = this.Email,
+             ClinicName = this.ClinicName,
+             ClinicId = this.ClinicId
         };
     }
 }
