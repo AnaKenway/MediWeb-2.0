@@ -12,6 +12,12 @@ public class DoctorDetailsViewModel
     public string ClinicName { get; set; }
     public long ClinicId { get; set; }
 
+    public ICollection<AppointmentSlot> AppointmentSlots { get; set; } = new List<AppointmentSlot>();
+
+    public ICollection<DoctorClinics> DoctorClinics { get; set; } = new List<DoctorClinics>();
+    public ICollection<Clinic> Clinics { get; set; } = [];
+    public ICollection<Specialization> Specializations { get; set; } = [];
+
     public string FullName { get => FirstName + " " + LastName; }
 
     public static DoctorDetailsViewModel CreateViewModelFromEntityModel(Doctor doctor)
@@ -29,6 +35,11 @@ public class DoctorDetailsViewModel
     {
         return new DoctorDetailsDTO
         {
+            Id = this.Id,
+            FirstName = this.FirstName,
+            LastName = this.LastName,
+            Email = this.Email,
+            ClinicId = this.ClinicId,
 
         };
     }

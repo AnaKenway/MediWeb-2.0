@@ -59,7 +59,7 @@ namespace MediWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var doctorDto = model.CreateDTOFromViewModel();
+                var doctorDto = model.CreateDTOFromRegisterViewModel();
                 var doctor = await _doctorService.RegisterDoctorAccount(doctorDto, model.Password);
 
                 await _doctorService.AddAsync(doctor);
@@ -102,7 +102,6 @@ namespace MediWeb.Controllers
             {
                 try
                 {
-                    var id = doctorDetails.Id;
                     var doctorDto = doctorDetails.CreateDTOFromDetailsViewModel();
                     var result = await _doctorService.Edit(doctorDto);
                 }

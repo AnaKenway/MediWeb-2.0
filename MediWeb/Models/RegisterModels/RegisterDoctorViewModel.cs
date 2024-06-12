@@ -14,7 +14,7 @@ public class RegisterDoctorViewModel : BaseRegisterViewModel
     [Required]
     public long SpecializationId { get; set; }
 
-    public DoctorDetailsDTO CreateDTOFromViewModel()
+    public DoctorDetailsDTO CreateDTOFromRegisterViewModel()
     {
         return new DoctorDetailsDTO
         {

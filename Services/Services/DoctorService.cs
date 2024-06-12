@@ -57,10 +57,19 @@ public class DoctorService : BaseService<Doctor>
 
         var doctor = new Doctor
         {
-            UserAccountId = user.Id
+            UserAccountId = user.Id    
         };
+        
+        await AddAsync(doctor);
 
-        return await AddAsync(doctor);
+        doctor.DoctorClinics.Add(new DoctorClinics
+        {
+            DoctorId = doctor.Id,
+            ClinicId = doctorDetails.ClinicId,
+            SpecializationId = doctorDetails.SpecializationId
+        });
+
+        return await UpdateAsync(doctor);
 
     }
 
