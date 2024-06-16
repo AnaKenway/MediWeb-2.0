@@ -19,9 +19,9 @@ public class DoctorService : BaseService<Doctor>
 
     public override async Task<IList<Doctor>> GetAllAsync()
     {
-        return await _set
+        return await _set.Include(d => d.UserAccount)
             .Include(d => d.DoctorClinics)
-            .Include(d => d.UserAccount)
+            .ThenInclude(dc => dc.Clinic)
             .ToListAsync();
     }
 
@@ -30,8 +30,7 @@ public class DoctorService : BaseService<Doctor>
         id.AssertIsNotNull();
         id.AssertIsNotZero();
 
-        return await _set
-            .Include(d => d.DoctorClinics)
+        return await _set.Include(d => d.DoctorClinics)
             .Include(d => d.UserAccount)
             .SingleOrDefaultAsync(d => d.Id == id) ??
             throw new MediWebClientException(MediWebFeature.CRUD, "Object with given Id doesn't exist.");
@@ -59,15 +58,14 @@ public class DoctorService : BaseService<Doctor>
         {
             UserAccountId = user.Id    
         };
-        
+
         await AddAsync(doctor);
 
-        doctor.DoctorClinics.Add(new DoctorClinics
+        doctor.DoctorClinics = doctorDetails.DoctorClinics.Select(dc => 
         {
-            DoctorId = doctor.Id,
-            ClinicId = doctorDetails.ClinicId,
-            SpecializationId = doctorDetails.SpecializationId
-        });
+            dc.DoctorId = doctor.Id;
+            return dc;
+        }).ToList();
 
         return await UpdateAsync(doctor);
 

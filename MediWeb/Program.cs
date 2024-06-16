@@ -26,7 +26,7 @@ builder.Services.AddScoped<DoctorService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<AppointmentSlotService>();
-builder.Services.AddScoped<DoctorWorksAtClinicService>();
+builder.Services.AddScoped<DoctorClinicsService>();
 builder.Services.AddScoped<MedicalEmployeeService>();
 builder.Services.AddScoped<SpecializationService>();
 #endregion

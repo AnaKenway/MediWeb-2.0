@@ -1,12 +1,12 @@
-﻿@model RegisterMedicalEmployeeViewModel;
+﻿@model RegisterDoctorViewModel;
 
 @{
-    ViewData["Title"] = "Register Medical Employee";
+    ViewData["Title"] = "Register Doctor";
 }
 
-<h1 class="my-4">Register a Medical Employee</h1>
+<h1 class="my-4">Register a Doctor</h1>
 
-<h4 class="mb-3">Medical Employee</h4>
+<h4 class="mb-3">Doctor</h4>
 <hr />
 <div class="row">
     <div class="col-md-6">
@@ -20,6 +20,11 @@
                 <label asp-for="LastName" class="form-label">Last Name</label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
@@ -40,6 +45,11 @@
                 <label asp-for="ClinicId" class="control-label">Clinic</label>
                 <select asp-for="ClinicId" class="form-control" asp-items="ViewBag.ClinicId"></select>
                 <span asp-validation-for="ClinicId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SpecializationId" class="form-label">Specialization</label>
+                <input asp-for="SpecializationId" class="form-control" />
+                <span asp-validation-for="SpecializationId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

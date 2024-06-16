@@ -1,4 +1,5 @@
-﻿using DTOs.UserAccountDTOs;
+﻿using DataLayer;
+using DTOs.UserAccountDTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace MediWeb.Models;
@@ -14,6 +15,10 @@ public class RegisterDoctorViewModel : BaseRegisterViewModel
     [Required]
     public long SpecializationId { get; set; }
 
+
+    [Required]
+    public string Note { get; set; }
+
     public DoctorDetailsDTO CreateDTOFromRegisterViewModel()
     {
         return new DoctorDetailsDTO
@@ -21,8 +26,15 @@ public class RegisterDoctorViewModel : BaseRegisterViewModel
             FirstName = this.FirstName,
             LastName = this.LastName,
             Title = this.Title,
-            ClinicId = ClinicId,
-            SpecializationId = SpecializationId
+            DoctorClinics = new List<DoctorClinics> 
+            {
+                new DoctorClinics
+                {
+                    ClinicId = this.ClinicId,
+                    SpecializationId = this.SpecializationId,
+                    Note = this.Note
+                }
+            }
         };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using DTOs.UserAccountDTOs;
+using System.Text;
 
 namespace MediWeb.Models;
 
@@ -8,17 +9,17 @@ public class DoctorDetailsViewModel
     public long Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
+    public string Title { get; set; }
     public string Email { get; set; }
-    public string ClinicName { get; set; }
-    public long ClinicId { get; set; }
 
-    public ICollection<AppointmentSlot> AppointmentSlots { get; set; } = new List<AppointmentSlot>();
+    public IList<AppointmentSlot> AppointmentSlots { get; set; } = new List<AppointmentSlot>();
 
-    public ICollection<DoctorClinics> DoctorClinics { get; set; } = new List<DoctorClinics>();
-    public ICollection<Clinic> Clinics { get; set; } = [];
-    public ICollection<Specialization> Specializations { get; set; } = [];
+    public IList<DoctorClinics> DoctorClinics { get; set; } = new List<DoctorClinics>();
+    public IList<Clinic> Clinics { get; set; } = [];
+    public IList<Specialization> Specializations { get; set; } = [];
 
     public string FullName { get => FirstName + " " + LastName; }
+    public string ClinicNames {  get => string.Join(",", Clinics); }
 
     public static DoctorDetailsViewModel CreateViewModelFromEntityModel(Doctor doctor)
     {
@@ -27,7 +28,8 @@ public class DoctorDetailsViewModel
             Id = doctor.Id,
             FirstName = doctor.UserAccount.FirstName,
             LastName = doctor.UserAccount.LastName,
-            Email = doctor.UserAccount.Email,
+            Email = doctor.UserAccount?.Email,
+            Clinics = doctor.DoctorClinics.Select(dc => dc.Clinic).ToList()
         };
     }
 
@@ -38,9 +40,9 @@ public class DoctorDetailsViewModel
             Id = this.Id,
             FirstName = this.FirstName,
             LastName = this.LastName,
+            Title = this.Title,
             Email = this.Email,
-            ClinicId = this.ClinicId,
-
+            DoctorClinics = this.DoctorClinics
         };
     }
 }

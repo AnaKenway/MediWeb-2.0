@@ -3,9 +3,9 @@ using Services;
 
 namespace MediWeb.Services;
 
-public class DoctorWorksAtClinicService : BaseService<DoctorClinics>
+public class DoctorClinicsService : BaseService<DoctorClinics>
 {
-    public DoctorWorksAtClinicService(MediWebContext context)
+    public DoctorClinicsService(MediWebContext context)
         : base(context)
     {
     }

@@ -1,5 +1,4 @@
-﻿
-namespace DataLayer;
+﻿namespace DataLayer;
 
 public partial class Specialization
 {
