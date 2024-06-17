@@ -1,6 +1,5 @@
 ﻿using DataLayer;
 using DTOs.UserAccountDTOs;
-using System.Text;
 
 namespace MediWeb.Models;
 
@@ -19,7 +18,7 @@ public class DoctorDetailsViewModel
     public IList<Specialization> Specializations { get; set; } = [];
 
     public string FullName { get => FirstName + " " + LastName; }
-    public string ClinicNames {  get => string.Join(",", Clinics); }
+    public string ClinicNames { get => string.Join(",", Clinics.Select(c => c.Name)); }
 
     public static DoctorDetailsViewModel CreateViewModelFromEntityModel(Doctor doctor)
     {
@@ -28,6 +27,7 @@ public class DoctorDetailsViewModel
             Id = doctor.Id,
             FirstName = doctor.UserAccount.FirstName,
             LastName = doctor.UserAccount.LastName,
+            Title = doctor.Title,
             Email = doctor.UserAccount?.Email,
             Clinics = doctor.DoctorClinics.Select(dc => dc.Clinic).ToList()
         };

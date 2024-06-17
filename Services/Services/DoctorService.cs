@@ -54,10 +54,8 @@ public class DoctorService : BaseService<Doctor>
             throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
         }
 
-        var doctor = new Doctor
-        {
-            UserAccountId = user.Id    
-        };
+        var doctor = doctorDetails.CreateDoctorEntityModel();
+        doctor.UserAccountId = user.Id;
 
         await AddAsync(doctor);
 
@@ -74,9 +72,9 @@ public class DoctorService : BaseService<Doctor>
     public async Task<Doctor> Edit(DoctorDetailsDTO doctorDto)
     {
         var doctor = await GetByIdAsync(doctorDto.Id);
-        //doctor.ClinicId = doctorDto.ClinicId;
         doctor.UserAccount.FirstName = doctorDto.FirstName;
         doctor.UserAccount.LastName = doctorDto.LastName;
+        doctor.Title = doctorDto.Title;
         doctor.UserAccount.Email = doctorDto.Email;
 
         var identityResult = await _userManager.UpdateAsync(doctor.UserAccount);

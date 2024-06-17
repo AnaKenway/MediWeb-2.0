@@ -1,4 +1,5 @@
-﻿using MediWeb.Models;
+﻿using DataLayer;
+using MediWeb.Models;
 using MediWeb.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -62,13 +63,17 @@ public class DoctorController : Controller
         if (ModelState.IsValid)
         {
             var doctorDto = model.CreateDTOFromRegisterViewModel();
+
             var doctor = await _doctorService.RegisterDoctorAccount(doctorDto, model.Password);
 
-            await _doctorService.AddAsync(doctor);
             return RedirectToAction(nameof(Index));
         }
+
         var clinics = await _clinicService.GetAllAsync();
-        ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name", model.ClinicId);
+        var specializations = await _specializationService.GetAllAsync();
+        ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name");
+        ViewData["SpecializationId"] = new SelectList(specializations, "Id", "SpecializationName");
+
         return View(model);
     }
 
@@ -88,7 +93,9 @@ public class DoctorController : Controller
         }
 
         var clinics = await _clinicService.GetAllAsync();
-        ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name", doctor.Clinics);
+        var specializations = await _specializationService.GetAllAsync();
+        ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name");
+        ViewData["SpecializationId"] = new SelectList(specializations, "Id", "SpecializationName");
 
         var doctorDetails = DoctorDetailsViewModel.CreateViewModelFromEntityModel(doctor);
 
@@ -120,8 +127,12 @@ public class DoctorController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        var clinics = await _doctorService.GetAllAsync();
-        ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name", doctorDetails.DoctorClinics.FirstOrDefault().ClinicId);
+
+        var clinics = await _clinicService.GetAllAsync();
+        var specializations = await _specializationService.GetAllAsync();
+        ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name");
+        ViewData["SpecializationId"] = new SelectList(specializations, "Id", "SpecializationName");
+
         return RedirectToAction(nameof(Index));
     }
 

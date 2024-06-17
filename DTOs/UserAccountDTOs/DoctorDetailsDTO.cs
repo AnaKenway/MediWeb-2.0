@@ -10,4 +10,13 @@ public class DoctorDetailsDTO
     public string Email { get; set; }
     public string Title { get; set; }  
     public IList<DoctorClinics> DoctorClinics { get; set; } = new List<DoctorClinics>();
+
+    public Doctor CreateDoctorEntityModel()
+    {
+        return new Doctor
+        {
+            Title = this.Title,
+            DoctorClinics = this.DoctorClinics
+        };
+    }
 }
