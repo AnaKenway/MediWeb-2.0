@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using DTOs.UserAccountDTOs;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace MediWeb.Models;
 
@@ -13,12 +14,12 @@ public class DoctorDetailsViewModel
 
     public IList<AppointmentSlot> AppointmentSlots { get; set; } = new List<AppointmentSlot>();
 
-    public IList<DoctorClinics> DoctorClinics { get; set; } = new List<DoctorClinics>();
+    public IList<DoctorClinicsViewModel> DoctorClinics { get; set; } = new List<DoctorClinicsViewModel>();
     public IList<Clinic> Clinics { get; set; } = [];
     public IList<Specialization> Specializations { get; set; } = [];
 
     public string FullName { get => FirstName + " " + LastName; }
-    public string ClinicNames { get => string.Join(",", Clinics.Select(c => c.Name)); }
+    public string ClinicNames { get => string.Join(", ", Clinics.Select(c => c.Name)); }
 
     public static DoctorDetailsViewModel CreateViewModelFromEntityModel(Doctor doctor)
     {
@@ -29,7 +30,13 @@ public class DoctorDetailsViewModel
             LastName = doctor.UserAccount.LastName,
             Title = doctor.Title,
             Email = doctor.UserAccount?.Email,
-            Clinics = doctor.DoctorClinics.Select(dc => dc.Clinic).ToList()
+            Clinics = doctor.DoctorClinics.Select(dc => dc.Clinic).ToList(),
+            DoctorClinics = doctor.DoctorClinics.Select(dc => new DoctorClinicsViewModel
+            {
+                ClinicId = dc.ClinicId,
+                SpecializationId = dc.SpecializationId,
+                Note = dc.Note ?? string.Empty
+            }).ToList()
         };
     }
 
@@ -42,7 +49,12 @@ public class DoctorDetailsViewModel
             LastName = this.LastName,
             Title = this.Title,
             Email = this.Email,
-            DoctorClinics = this.DoctorClinics
+            DoctorClinics = this.DoctorClinics.Select(dc => new DoctorClinics
+            {
+                ClinicId = dc.ClinicId,
+                SpecializationId = dc.SpecializationId,
+                Note = dc.Note
+            }).ToList()
         };
     }
 }

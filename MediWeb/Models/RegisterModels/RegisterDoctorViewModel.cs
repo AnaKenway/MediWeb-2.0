@@ -9,14 +9,7 @@ public class RegisterDoctorViewModel : BaseRegisterViewModel
     [Required]
     public string Title { get; set; }
 
-    [Required]
-    public long ClinicId { get; set; }
-
-    [Required]
-    public long SpecializationId { get; set; }
-
-    [Required]
-    public string Note { get; set; }
+    public IList<DoctorClinicsViewModel> DoctorClinics { get; set; } = new List<DoctorClinicsViewModel>();
 
     public DoctorDetailsDTO CreateDTOFromRegisterViewModel()
     {
@@ -26,15 +19,12 @@ public class RegisterDoctorViewModel : BaseRegisterViewModel
             LastName = this.LastName,
             Title = this.Title,
             Email = this.Email,
-            DoctorClinics = new List<DoctorClinics> 
-            {
-                new DoctorClinics
-                {
-                    ClinicId = this.ClinicId,
-                    SpecializationId = this.SpecializationId,
-                    Note = this.Note
-                }
-            }
+            DoctorClinics = this.DoctorClinics.Select(dc => new DoctorClinics 
+            { 
+                ClinicId = dc.ClinicId,
+                SpecializationId = dc.SpecializationId,
+                Note = dc.Note
+            }).ToList()
         };
     }
 }

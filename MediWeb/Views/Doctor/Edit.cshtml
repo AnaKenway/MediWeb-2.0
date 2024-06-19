@@ -31,16 +31,150 @@
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            @*Maybe create a new modal or a new view for editing the clinics in which a doctor works at?
-                <div class="mb-3">
-                <label asp-for="ClinicName" class="form-label"></label>
-                <input asp-for="ClinicName" class="form-control" />
-                <span asp-validation-for="ClinicName" class="text-danger"></span>
-            </div> *@
-            <div class="d-grid gap-2">
+            <div id="doctor-clinics-container" class="mb-3">
+                <h4 class="mb-3">Edit Doctor Clinics</h4>
+                <button type="button" id="add-doctor-clinic" class="btn btn-secondary mb-3">Add Clinic and Specialization</button>
+
+                <!-- Existing DoctorClinics fields -->
+                @foreach (var doctorClinic in Model.DoctorClinics)
+                {
+                    <div class="form-group doctor-clinic-existing mb-3">
+                        <div class="row clinic-specialization-pair mb-3">
+                            <div class="col-md-5">
+                                <label class="control-label">Clinic</label>
+                                <select class="form-control clinic-id-select" name="doctorClinic.ClinicId" asp-items="ViewBag.ClinicId" value="@doctorClinic.ClinicId"></select>
+                                <span class="text-danger clinic-id-validation" data-valmsg-for="doctorClinic.ClinicId"></span>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="control-label">Specialization</label>
+                                <select class="form-control specialization-id-select" name="doctorClinic.SpecializationId" asp-items="ViewBag.SpecializationId" value="@doctorClinic.SpecializationId"></select>
+                                <span class="text-danger specialization-id-validation" data-valmsg-for="doctorClinic.SpecializationId"></span>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="remove-doctor-clinic btn btn-danger mb-2">Remove</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Note</label>
+                                <input class="form-control note-input" name="doctorClinic.Note" value="@doctorClinic.Note" />
+                                <span class="text-danger note-validation" data-valmsg-for="doctorClinic.Note"></span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Template for dynamically adding DoctorClinic fields -->
+                <div class="form-group doctor-clinic-template mb-3" style="display: none;">
+                    <div class="row clinic-specialization-pair mb-3">
+                        <div class="col-md-5">
+                            <label class="control-label">Clinic</label>
+                            <select class="form-control clinic-id-select" asp-items="ViewBag.ClinicId"></select>
+                            <span class="text-danger clinic-id-validation"></span>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="control-label">Specialization</label>
+                            <select class="form-control specialization-id-select" asp-items="ViewBag.SpecializationId"></select>
+                            <span class="text-danger specialization-id-validation"></span>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="remove-doctor-clinic btn btn-danger mb-2">Remove</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Note</label>
+                            <input class="form-control note-input" />
+                            <span class="text-danger note-validation"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .row {
+            margin-bottom: 1rem;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var index = @Model.DoctorClinics.Count;
+            var selectedClinicIds = [];
+
+            function updateClinicSelectOptions() {
+                var options = $('#doctor-clinics-container select.clinic-id-select').first().html();
+                $('#doctor-clinics-container select.clinic-id-select').each(function () {
+                    var currentClinicId = $(this).val();
+                    $(this).html(options);
+                    if (currentClinicId) {
+                        $(this).val(currentClinicId);
+                    }
+                    selectedClinicIds.forEach(function (clinicId) {
+                        $(this).find('option[value="' + clinicId + '"]').remove();
+                    }.bind(this));
+                });
+            }
+
+            $('#add-doctor-clinic').click(function () {
+                var newTemplate = $('.doctor-clinic-template').clone().removeClass('doctor-clinic-template').show();
+                newTemplate.find('.clinic-id-select').attr('name', 'DoctorClinics[' + index + '].ClinicId');
+                newTemplate.find('.clinic-id-validation').attr('data-valmsg-for', 'DoctorClinics[' + index + '].ClinicId');
+
+                newTemplate.find('.specialization-id-select').attr('name', 'DoctorClinics[' + index + '].SpecializationId');
+                newTemplate.find('.specialization-id-validation').attr('data-valmsg-for', 'DoctorClinics[' + index + '].SpecializationId');
+
+                newTemplate.find('.note-input').attr('name', 'DoctorClinics[' + index + '].Note');
+                newTemplate.find('.note-validation').attr('data-valmsg-for', 'DoctorClinics[' + index + '].Note');
+
+                $('#doctor-clinics-container').append(newTemplate);
+                updateClinicSelectOptions();
+                index++;
+            });
+
+            $(document).on('change', '.clinic-id-select', function () {
+                var selectedClinicId = $(this).val();
+                selectedClinicIds.push(selectedClinicId);
+                updateClinicSelectOptions();
+            });
+
+            $(document).on('click', '.remove-doctor-clinic', function () {
+                var removedClinicId = $(this).closest('.clinic-specialization-pair').find('.clinic-id-select').val();
+                selectedClinicIds = selectedClinicIds.filter(function (id) {
+                    return id !== removedClinicId;
+                });
+                $(this).closest('.clinic-specialization-pair').remove();
+                updateClinicSelectOptions();
+            });
+
+            // Initialize the selectedClinicIds array with the current selections
+            $('.clinic-id-select').each(function () {
+                selectedClinicIds.push($(this).val());
+            });
+            updateClinicSelectOptions();
+        });
+    </script>
+}

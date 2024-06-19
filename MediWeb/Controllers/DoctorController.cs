@@ -94,8 +94,11 @@ public class DoctorController : Controller
 
         var clinics = await _clinicService.GetAllAsync();
         var specializations = await _specializationService.GetAllAsync();
-        ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name");
-        ViewData["SpecializationId"] = new SelectList(specializations, "Id", "SpecializationName");
+        var selectListClinics = new SelectList(clinics, "Id", "Name");
+        ViewData["ClinicId"] = selectListClinics;
+
+        var selectListSpecializations = new SelectList(specializations, "Id", "SpecializationName");
+        ViewData["SpecializationId"] = selectListSpecializations;
 
         var doctorDetails = DoctorDetailsViewModel.CreateViewModelFromEntityModel(doctor);
 
