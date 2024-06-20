@@ -1,6 +1,6 @@
 ﻿using DataLayer;
 using DTOs.UserAccountDTOs;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MediWeb.Models;
 
@@ -14,6 +14,7 @@ public class DoctorDetailsViewModel
 
     public IList<AppointmentSlot> AppointmentSlots { get; set; } = new List<AppointmentSlot>();
 
+    [BindProperty]
     public IList<DoctorClinicsViewModel> DoctorClinics { get; set; } = new List<DoctorClinicsViewModel>();
     public IList<Clinic> Clinics { get; set; } = [];
     public IList<Specialization> Specializations { get; set; } = [];
@@ -51,6 +52,7 @@ public class DoctorDetailsViewModel
             Email = this.Email,
             DoctorClinics = this.DoctorClinics.Select(dc => new DoctorClinics
             {
+                DoctorId = this.Id,
                 ClinicId = dc.ClinicId,
                 SpecializationId = dc.SpecializationId,
                 Note = dc.Note

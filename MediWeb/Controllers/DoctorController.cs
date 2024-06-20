@@ -1,5 +1,4 @@
-﻿using DataLayer;
-using MediWeb.Models;
+﻿using MediWeb.Models;
 using MediWeb.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -94,6 +93,7 @@ public class DoctorController : Controller
 
         var clinics = await _clinicService.GetAllAsync();
         var specializations = await _specializationService.GetAllAsync();
+
         var selectListClinics = new SelectList(clinics, "Id", "Name");
         ViewData["ClinicId"] = selectListClinics;
 

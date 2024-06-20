@@ -76,6 +76,7 @@ public class DoctorService : BaseService<Doctor>
         doctor.UserAccount.LastName = doctorDto.LastName;
         doctor.Title = doctorDto.Title;
         doctor.UserAccount.Email = doctorDto.Email;
+        doctor.DoctorClinics = doctorDto.DoctorClinics;
 
         var identityResult = await _userManager.UpdateAsync(doctor.UserAccount);
         if (!identityResult.Succeeded)
