@@ -15,7 +15,7 @@ public class DoctorDetailsViewModel
     public IList<AppointmentSlot> AppointmentSlots { get; set; } = new List<AppointmentSlot>();
 
     [BindProperty]
-    public IList<DoctorClinicsViewModel> DoctorClinics { get; set; } = new List<DoctorClinicsViewModel>();
+    public IList<DoctorClinics> DoctorClinics { get; set; } = new List<DoctorClinics>();
     public IList<Clinic> Clinics { get; set; } = [];
     public IList<Specialization> Specializations { get; set; } = [];
 
@@ -32,12 +32,7 @@ public class DoctorDetailsViewModel
             Title = doctor.Title,
             Email = doctor.UserAccount?.Email,
             Clinics = doctor.DoctorClinics.Select(dc => dc.Clinic).ToList(),
-            DoctorClinics = doctor.DoctorClinics.Select(dc => new DoctorClinicsViewModel
-            {
-                ClinicId = dc.ClinicId,
-                SpecializationId = dc.SpecializationId,
-                Note = dc.Note ?? string.Empty
-            }).ToList()
+            DoctorClinics = doctor.DoctorClinics.ToList()
         };
     }
 
@@ -50,13 +45,7 @@ public class DoctorDetailsViewModel
             LastName = this.LastName,
             Title = this.Title,
             Email = this.Email,
-            DoctorClinics = this.DoctorClinics.Select(dc => new DoctorClinics
-            {
-                DoctorId = this.Id,
-                ClinicId = dc.ClinicId,
-                SpecializationId = dc.SpecializationId,
-                Note = dc.Note
-            }).ToList()
+            DoctorClinics = this.DoctorClinics.ToList()
         };
     }
 }

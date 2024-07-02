@@ -80,4 +80,22 @@ public class BaseService<T> where T : class
         return false;
     }
 
+    public virtual async Task<bool> BulkDeleteAsync(IEnumerable<T> entities)
+    {
+        entities.AssertIsNotNull();
+        foreach (var item in entities)
+        {
+            item.AssertIsNotNull();
+        }
+
+        _set.RemoveRange(entities);
+        var result = await _context.SaveChangesAsync();
+
+        if (result > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
 }

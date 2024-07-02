@@ -10,13 +10,15 @@ public class DoctorController : Controller
 {
     private readonly DoctorService _doctorService;
     private readonly ClinicService _clinicService;
+    private readonly DoctorClinicsService _doctorClinicsService;
     private readonly SpecializationService _specializationService;
 
-    public DoctorController(DoctorService service, ClinicService clinicService, SpecializationService specializationService)
+    public DoctorController(DoctorService service, ClinicService clinicService, SpecializationService specializationService, DoctorClinicsService doctorClinicsService)
     {
         _doctorService = service;
         _clinicService = clinicService;
         _specializationService = specializationService;
+        _doctorClinicsService = doctorClinicsService;
     }
 
     // GET: Doctor
@@ -162,7 +164,19 @@ public class DoctorController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(long id)
     {
+        await _doctorClinicsService.BulkDeleteDoctorClinicsByDoctorIdAsync(id);
         await _doctorService.DeleteAsync(id);
         return RedirectToAction(nameof(Index));
     }
+
+    // POST: Doctor/DeleteDoctorClinic/5
+    [HttpPost, ActionName("DeleteDoctorClinic")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteDoctorClinic(long doctorId, long clinicId, long specializationId)
+    {
+        await _doctorClinicsService.DeleteDoctorClinicAsync(doctorId, clinicId, specializationId);
+        return RedirectToAction(nameof(Edit), new { id = doctorId });
+    }
+
+
 }
