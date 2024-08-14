@@ -18,13 +18,7 @@ public class RegisterDoctorViewModel : BaseRegisterViewModel
             FirstName = this.FirstName,
             LastName = this.LastName,
             Title = this.Title,
-            Email = this.Email,
-            DoctorClinics = this.DoctorClinics.Select(dc => new DoctorClinics 
-            { 
-                ClinicId = dc.ClinicId,
-                SpecializationId = dc.SpecializationId,
-                Note = dc.Note
-            }).ToList()
+            Email = this.Email
         };
     }
 }
