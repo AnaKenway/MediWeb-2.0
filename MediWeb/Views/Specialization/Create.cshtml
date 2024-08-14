@@ -1,0 +1,26 @@
+﻿@using DataLayer
+@model Specialization;
+
+@{
+    ViewData["Title"] = "Register Specialization";
+}
+
+<h1 class="my-4">Create a Specialization</h1>
+
+<h4 class="mb-3">Specialization</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div class="form-group">
+                <label asp-for="SpecializationName" class="form-label"></label>
+                <input asp-for="SpecializationName" class="form-control" />
+                <span asp-validation-for="SpecializationName" class="text-danger"></span>
+            </div>            
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>

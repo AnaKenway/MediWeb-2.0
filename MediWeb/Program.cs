@@ -1,6 +1,6 @@
 using DataLayer;
+using MediWeb.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +11,25 @@ builder.Services.AddDbContext<MediWebContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<UserAccount>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<UserAccount>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedEmail = false;
+    })
     .AddEntityFrameworkStores<MediWebContext>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+#region Services
+builder.Services.AddScoped<PatientService>();
+builder.Services.AddScoped<ClinicService>();
+builder.Services.AddScoped<DoctorService>();
+builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<AppointmentService>();
+builder.Services.AddScoped<AppointmentSlotService>();
+builder.Services.AddScoped<DoctorClinicsService>();
+builder.Services.AddScoped<MedicalEmployeeService>();
+builder.Services.AddScoped<SpecializationService>();
+#endregion
 
 var app = builder.Build();
 
