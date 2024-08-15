@@ -1,9 +1,11 @@
-﻿using DataLayer;
+﻿using Common;
+using DataLayer;
 using MediWeb.Models;
 using MediWeb.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MediWeb.Controllers;
 
@@ -54,29 +56,31 @@ public class DoctorClinicController : Controller
  
 
     // GET: DoctorClinic/Delete/5
-    public async Task<IActionResult> Delete(long? id)
+    public IActionResult Delete(long id)
     {
-        //if (id == null)
-        //{
-        //    return NotFound();
-        //}
+        id.AssertIsNotZero();
+        var doctorId = id;
 
-        //var doctor = await _doctorService.GetByIdAsync(id.Value);
-        //if (doctor == null)
-        //{
-        //    return NotFound();
-        //}
-
-        //var doctorDetails = DoctorDetailsViewModel.CreateViewModelFromEntityModel(doctor);
-        //return View(doctorDetails);
+        var doctorClinics = _doctorClinicsService.GetAllDoctorClinicsByDoctorId(doctorId);
+        if (doctorClinics.IsNullOrEmpty())
+        {
+            return NotFound();
+        }
+        return View(doctorClinics);
     }
 
     // POST: DoctorClinic/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(long id)
+    public async Task<IActionResult> DeleteConfirmed(DoctorClinics doctorClinic)
     {
-        await _doctorClinicsService.DeleteAsync(id);
-        return RedirectToAction(nameof(Index));
+        if (await _doctorClinicsService.DeleteAsync(doctorClinic))
+        {
+            return RedirectToAction(nameof(Index));
+        }
+        else
+        {
+            return View(doctorClinic);
+        }
     }
 }
