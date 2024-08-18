@@ -38,28 +38,25 @@ public class DoctorClinicController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(DoctorClinics doctorClinic)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
+            var clinics = await _clinicService.GetAllAsync();
+            var specializations = await _specializationService.GetAllAsync();
+            ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name");
+            ViewData["SpecializationId"] = new SelectList(specializations, "Id", "SpecializationName");
 
-            var doctor = await _doctorClinicsService.AddAsync(doctorClinic);
+            return View(doctorClinic);
+        }  
 
-            return RedirectToAction(nameof(Index));
-        }
-
-        var clinics = await _clinicService.GetAllAsync();
-        var specializations = await _specializationService.GetAllAsync();
-        ViewData["ClinicId"] = new SelectList(clinics, "Id", "Name");
-        ViewData["SpecializationId"] = new SelectList(specializations, "Id", "SpecializationName");
-
-        return View(doctorClinic);
+        await _doctorClinicsService.AddAsync(doctorClinic);
+        return RedirectToAction("Index", "Doctor");
     }
  
 
     // GET: DoctorClinic/Delete/5
-    public IActionResult Delete(long id)
+    public IActionResult Delete(long doctorId)
     {
-        id.AssertIsNotZero();
-        var doctorId = id;
+        doctorId.AssertIsNotZero();
 
         var doctorClinics = _doctorClinicsService.GetAllDoctorClinicsByDoctorId(doctorId);
         if (doctorClinics.IsNullOrEmpty())
@@ -69,18 +66,19 @@ public class DoctorClinicController : Controller
         return View(doctorClinics);
     }
 
-    // POST: DoctorClinic/Delete/5
-    [HttpPost, ActionName("Delete")]
+    // POST: DoctorClinic/DeleteConfirmed?doctorId=3&clinicId=3&specializationId=9
+    [HttpPost, ActionName("DeleteConfirmed")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(DoctorClinics doctorClinic)
+    public async Task<IActionResult> DeleteConfirmed(long doctorId, long clinicId, long specializationId)
     {
-        if (await _doctorClinicsService.DeleteAsync(doctorClinic))
+        if (await _doctorClinicsService.DeleteDoctorClinicByIdsAsync(doctorId, clinicId, specializationId))
         {
-            return RedirectToAction(nameof(Index));
+            //TODO:Add a client message that says the deletion was successful
+            return RedirectToAction(nameof(Delete), "DoctorClinic", new { doctorId });
         }
         else
         {
-            return View(doctorClinic);
+            return RedirectToAction(nameof(Delete), doctorId);
         }
     }
 }

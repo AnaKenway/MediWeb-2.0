@@ -1,0 +1,60 @@
+﻿@using DataLayer;
+@model DoctorClinics;
+
+@{
+    ViewData["Title"] = "Add workplace";
+}
+
+<h1 class="my-4">Add workplace</h1>
+
+<h4 class="mb-3">Workplace</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div class="form-group">
+                <input asp-for="DoctorId" class="form-control" type="hidden" value="@ViewBag.DoctorId" />
+                <span asp-validation-for="DoctorId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClinicId" class="control-label">Clinic</label>
+                <select asp-for="ClinicId" class="form-control" asp-items="ViewBag.ClinicId"></select>
+                <span asp-validation-for="ClinicId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SpecializationId" class="control-label">Specialization</label>
+                <select asp-for="SpecializationId" class="form-control" asp-items="ViewBag.SpecializationId"></select>
+                <span asp-validation-for="SpecializationId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Note" class="form-label">Note</label>
+                <input asp-for="Note" class="form-control" />
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .row {
+            margin-bottom: 1rem;
+        }
+    </style>
+}

@@ -2,7 +2,7 @@
 @model IEnumerable<DoctorClinics>
 
 @{
-    ViewData["Title"] = "Doctor works at";
+    ViewData["Title"] = "Doctor's workplaces";
 }
 
 <h1 class="my-4">Doctor's workplaces</h1>
@@ -13,6 +13,7 @@
             <th scope="col">Doctor</th>
             <th scope="col">Clinic</th>
             <th scope="col">Specialization</th>
+            <th scope="col">Note</th>
             <th scope="col" class="text-end">Actions</th>
         </tr>
     </thead>
@@ -20,13 +21,20 @@
         @foreach (var doctorClinic in Model)
         {
             <tr>
-                <td>@(doctorClinic.Doctor.UserAccount.FirstName + " " + doctorClinic.Doctor.UserAccount.LastName)</td>
-                <td>@doctorClinic.Clinic.Name</td>
-                <td>@doctorClinic.Specialization.SpecializationName</td>
+                <td>@(doctorClinic.Doctor?.UserAccount.FirstName + " " + doctorClinic.Doctor?.UserAccount.LastName)</td>
+                <td>@doctorClinic.Clinic?.Name</td>
+                <td>@doctorClinic.Specialization?.SpecializationName</td>
+                <td>@doctorClinic.Note</td>
                 <td class="text-end">
-                    <a asp-controller="DoctorClinic" asp-action="Delete" asp-route-id="@doctorClinic" class="btn btn-sm btn-warning">Delete Work Clinics</a>
+                <form method="post" asp-controller="DoctorClinic" asp-action="DeleteConfirmed"
+                    asp-route-doctorId="@doctorClinic.DoctorId"
+                    asp-route-clinicId="@doctorClinic.ClinicId"
+                    asp-route-specializationId="@doctorClinic.SpecializationId">
+                        <input type="submit" class="btn btn-danger" value="Delete workplace"/>
+                </form>
                 </td>
             </tr>
-        }
+        }      
     </tbody>
 </table>
+<a asp-controller="Doctor" asp-action="Index" class="btn btn-secondary">Back to Doctors</a>
