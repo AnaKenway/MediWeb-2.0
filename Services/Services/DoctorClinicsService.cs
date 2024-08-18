@@ -47,7 +47,11 @@ public class DoctorClinicsService : BaseService<DoctorClinics>
         doctorId.AssertIsNotNull();
         doctorId.AssertIsNotZero();
 
-        return  _set.Where(dc => dc.DoctorId == doctorId);
+        return _set.Include(dc => dc.Doctor)
+            .ThenInclude(doc => doc.UserAccount)
+            .Include(dc => dc.Clinic)
+            .Include(dc => dc.Specialization)           
+            .Where(dc => dc.DoctorId == doctorId);
     }
 
     public async Task BulkDeleteDoctorClinicsByDoctorIdAsync(long doctorId)
@@ -57,7 +61,7 @@ public class DoctorClinicsService : BaseService<DoctorClinics>
     }
 
 
-    public async Task<bool> DeleteDoctorClinicAsync(long doctorId, long clinicId, long specializationId)
+    public async Task<bool> DeleteDoctorClinicByIdsAsync(long doctorId, long clinicId, long specializationId)
     {
         var doctorClinic = await GetDoctorClinicByCompositeKey(doctorId, clinicId, specializationId);
         _set.Remove(doctorClinic);

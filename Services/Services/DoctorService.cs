@@ -57,16 +57,7 @@ public class DoctorService : BaseService<Doctor>
         var doctor = doctorDetails.CreateDoctorEntityModel();
         doctor.UserAccountId = user.Id;
 
-        await AddAsync(doctor);
-
-        doctor.DoctorClinics = doctorDetails.DoctorClinics.Select(dc => 
-        {
-            dc.DoctorId = doctor.Id;
-            return dc;
-        }).ToList();
-
-        return await UpdateAsync(doctor);
-
+        return await AddAsync(doctor);
     }
 
     public async Task<Doctor> Edit(DoctorDetailsDTO doctorDto)
@@ -76,7 +67,6 @@ public class DoctorService : BaseService<Doctor>
         doctor.UserAccount.LastName = doctorDto.LastName;
         doctor.Title = doctorDto.Title;
         doctor.UserAccount.Email = doctorDto.Email;
-        doctor.DoctorClinics = doctorDto.DoctorClinics;
 
         var identityResult = await _userManager.UpdateAsync(doctor.UserAccount);
         if (!identityResult.Succeeded)
