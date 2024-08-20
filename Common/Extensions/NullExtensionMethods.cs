@@ -13,7 +13,7 @@ public static class NullExtensionMethods
     /// </summary>
     /// <param name="value"></param>
     /// <exception cref="ArgumentException"></exception>
-    public static void AssertIsNotNullOrEmpty(this string value)
+    public static void AssertIsNotNullOrEmpty(this string? value)
     {
         if (value.IsNullOrEmpty())
             throw new ArgumentException("The passed string value is null or empty.", nameof(value));

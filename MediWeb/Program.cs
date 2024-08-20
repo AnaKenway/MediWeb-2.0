@@ -1,5 +1,6 @@
 using DataLayer;
 using MediWeb.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +17,9 @@ builder.Services.AddDefaultIdentity<UserAccount>(options =>
         options.SignIn.RequireConfirmedAccount = false;
         options.SignIn.RequireConfirmedEmail = false;
     })
+    .AddRoles<IdentityRole<long>>()
     .AddEntityFrameworkStores<MediWebContext>();
+
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 #region Services
