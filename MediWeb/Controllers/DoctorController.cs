@@ -1,7 +1,6 @@
 ﻿using MediWeb.Models;
 using MediWeb.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediWeb.Controllers;

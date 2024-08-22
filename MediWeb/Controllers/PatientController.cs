@@ -5,18 +5,20 @@ using MediWeb.Models;
 using MediWeb.Services;
 
 namespace MediWeb.Controllers;
-public class AccountController : Controller
+public class PatientController : Controller
 {
     private readonly UserManager<UserAccount> _userManager;
     private readonly SignInManager<UserAccount> _signInManager;
     private readonly PatientService _patientService;
 
-    public AccountController(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager, PatientService patientService)
+    public PatientController(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager, PatientService patientService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _patientService = patientService;
     }
+
+    #region Register and Login
 
     [HttpGet]
     public IActionResult RegisterPatient()
@@ -81,5 +83,15 @@ public class AccountController : Controller
     {
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
+    }
+
+    #endregion
+
+    [HttpGet]
+    public async Task<IActionResult> ListPatients()
+    {
+        var patients = await _patientService.GetAllAsync();
+        var patientsDetails = patients.Select(p => new PatientDetailsViewModel(p));
+        return View(patientsDetails);
     }
 }

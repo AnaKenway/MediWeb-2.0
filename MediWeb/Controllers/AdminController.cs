@@ -19,6 +19,8 @@ public class AdminController : Controller
         return View();
     }
 
+    #region User Roles CRUD
+
     [HttpGet]
     public async Task<IActionResult> ListRoles()
     {
@@ -58,7 +60,7 @@ public class AdminController : Controller
 
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction("ListRoles", "Admin");
             }
 
             foreach (IdentityError error in result.Errors)
@@ -144,4 +146,7 @@ public class AdminController : Controller
 
         return View("ListRoles", await _roleManager.Roles.ToListAsync());
     }
+
+    #endregion
+
 }
