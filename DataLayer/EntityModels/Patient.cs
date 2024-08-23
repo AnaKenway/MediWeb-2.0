@@ -11,7 +11,7 @@ public partial class Patient
     public string PhoneNumber { get; set; } = null!;
 
     public long UserAccountId { get; set; }
-    public virtual UserAccount UserAccount { get; set; } = null!;
+    public virtual UserAccount UserAccount { get; set; } = new UserAccount();
 
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 }

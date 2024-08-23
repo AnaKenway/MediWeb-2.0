@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MediWeb.Models;
 using MediWeb.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace MediWeb.Controllers;
 public class PatientController : Controller
@@ -93,5 +94,37 @@ public class PatientController : Controller
         var patients = await _patientService.GetAllAsync();
         var patientsDetails = patients.Select(p => new PatientDetailsViewModel(p));
         return View(patientsDetails);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditPatient(long patientId)
+    {
+        var patient = await _patientService.GetByIdAsync(patientId);
+        return View(new PatientDetailsViewModel(patient));
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> EditPatient(PatientDetailsViewModel patientDetails)
+    {
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var result = await _patientService.EditPatientAsync(patientDetails.ToPatientEntityModel());
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (await _patientService.GetByIdAsync(patientDetails.Id) == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(ListPatients));
+        }
+        return RedirectToAction(nameof(ListPatients));
     }
 }
