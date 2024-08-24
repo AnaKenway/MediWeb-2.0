@@ -10,11 +10,13 @@ namespace MediWeb.Services;
 public class DoctorService : BaseService<Doctor>
 {
     private readonly UserManager<UserAccount> _userManager;
+    private readonly DoctorClinicsService _doctorClinicsService;
 
-    public DoctorService(MediWebContext context, UserManager<UserAccount> userManager)
+    public DoctorService(MediWebContext context, UserManager<UserAccount> userManager, DoctorClinicsService doctorClinicsService)
         : base(context)
     {
         _userManager = userManager;
+        _doctorClinicsService = doctorClinicsService;
     }
 
     public override async Task<IList<Doctor>> GetAllAsync()
@@ -30,8 +32,9 @@ public class DoctorService : BaseService<Doctor>
         id.AssertIsNotNull();
         id.AssertIsNotZero();
 
-        return await _set.Include(d => d.DoctorClinics)
-            .Include(d => d.UserAccount)
+        return await _set.Include(d => d.UserAccount)
+            .Include(d => d.DoctorClinics)
+            .ThenInclude(dc => dc.Clinic)
             .SingleOrDefaultAsync(d => d.Id == id) ??
             throw new MediWebClientException(MediWebFeature.CRUD, "Object with given Id doesn't exist.");
     }
@@ -74,5 +77,26 @@ public class DoctorService : BaseService<Doctor>
             throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
         }
         return await UpdateAsync(doctor);
+    }
+
+    public override async Task<bool> DeleteAsync(long doctorId)
+    {
+        doctorId.AssertIsNotNull();
+        doctorId.AssertIsNotZero();
+
+        var entity = await GetByIdAsync(doctorId)
+            ?? throw new Exception("Cannot delete the doctor with Id " + doctorId + "because the doctor with that Id could not be found.");
+
+        await _doctorClinicsService.BulkDeleteDoctorClinicsByDoctorIdAsync(doctorId);
+        _set.Remove(entity);
+        await _userManager.DeleteAsync(entity.UserAccount);      
+        var result = await _context.SaveChangesAsync();
+
+        if (result > 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

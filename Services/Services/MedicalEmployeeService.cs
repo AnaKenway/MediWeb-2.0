@@ -79,4 +79,24 @@ public class MedicalEmployeeService : BaseService<MedicalEmployee>
         }
         return await UpdateAsync(medicalEmployee);        
     }
+
+    public override async Task<bool> DeleteAsync(long medicalEmployeeId)
+    {
+        medicalEmployeeId.AssertIsNotNull();
+        medicalEmployeeId.AssertIsNotZero();
+
+        var entity = await GetByIdAsync(medicalEmployeeId)
+            ?? throw new Exception("Cannot delete the employee with Id " + medicalEmployeeId + "because the employee with that Id could not be found.");
+
+        _set.Remove(entity);
+        await _userManager.DeleteAsync(entity.UserAccount);       
+        var result = await _context.SaveChangesAsync();
+
+        if (result > 0)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

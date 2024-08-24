@@ -53,4 +53,24 @@ public class PatientService : BaseService<Patient>
         return await UpdateAsync(existingPatient);
     }
 
+    public override async Task<bool> DeleteAsync(long patientId)
+    {
+        patientId.AssertIsNotNull();
+        patientId.AssertIsNotZero();
+
+        var entity = await GetByIdAsync(patientId)
+            ?? throw new Exception("Cannot delete the patient with Id " + patientId + "because the patient with that Id could not be found.");
+
+        _set.Remove(entity);
+        await _userManager.DeleteAsync(entity.UserAccount);       
+        var result = await _context.SaveChangesAsync();
+
+        if (result > 0)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 }

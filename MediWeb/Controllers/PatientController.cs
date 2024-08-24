@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediWeb.Models;
 using MediWeb.Services;
 using Microsoft.EntityFrameworkCore;
+using Common;
 
 namespace MediWeb.Controllers;
 public class PatientController : Controller
@@ -88,6 +89,8 @@ public class PatientController : Controller
 
     #endregion
 
+    #region Patient (C)RUD
+
     [HttpGet]
     public async Task<IActionResult> ListPatients()
     {
@@ -127,4 +130,30 @@ public class PatientController : Controller
         }
         return RedirectToAction(nameof(ListPatients));
     }
+
+    // GET: Patient/DeletePatient/5
+    public async Task<IActionResult> DeletePatient(long patientId)
+    {
+        patientId.AssertIsNotZero();
+
+        var patient = await _patientService.GetByIdAsync(patientId);
+        if (patient == null)
+        {
+            return NotFound();
+        }
+
+        var patientDetails = new PatientDetailsViewModel(patient);
+        return View(patientDetails);
+    }
+
+    // POST: Patient/DeletePatientConfirmed/5
+    [HttpPost, ActionName("DeletePatientConfirmed")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeletePatientConfirmed(long patientId)
+    {
+        await _patientService.DeleteAsync(patientId);
+        return RedirectToAction(nameof(ListPatients));
+    }
+
+    #endregion
 }
