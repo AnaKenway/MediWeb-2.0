@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Reflection;
 
 namespace MediWeb.Helpers;
@@ -13,7 +12,7 @@ public static class EnumExtensions
                    .ToList();
     }
 
-    private static string GetEnumDescription<T>(T value)
+    public static string GetEnumDescription<T>(T value)
     {
         FieldInfo fi = value?.GetType().GetField(value.ToString());
         DescriptionAttribute[] attributes = (DescriptionAttribute[])fi?.GetCustomAttributes(typeof(DescriptionAttribute), false);
