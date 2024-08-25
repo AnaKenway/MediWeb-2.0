@@ -1,4 +1,7 @@
 ﻿using Common;
+using DataLayer;
+using MediWeb.Models;
+using MediWeb.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,9 +11,11 @@ namespace MediWeb.Controllers;
 public class AdminController : Controller
 {
     private readonly RoleManager<IdentityRole<long>> _roleManager;
-    public AdminController(RoleManager<IdentityRole<long>> roleManager)
+    private readonly AdminService _adminService;
+    public AdminController(RoleManager<IdentityRole<long>> roleManager, AdminService adminService)
     {
         _roleManager = roleManager;
+        _adminService = adminService;
     }
 
     // GET: Admin
@@ -19,7 +24,7 @@ public class AdminController : Controller
         return View();
     }
 
-    #region User Roles CRUD
+    #region Roles CRUD
 
     [HttpGet]
     public async Task<IActionResult> ListRoles()
@@ -145,6 +150,71 @@ public class AdminController : Controller
         }
 
         return View("ListRoles", await _roleManager.Roles.ToListAsync());
+    }
+
+    #endregion
+
+    #region Admin CRUD
+
+    [HttpGet]
+    public async Task<IActionResult> ListAdmins()
+    {
+        var admins = await _adminService.GetAllAsync();
+        return View(admins);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditAdmin(long adminId)
+    {
+        var admin = await _adminService.GetByIdAsync(adminId);
+        return View(new AdminDetailsViewModel(admin));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditAdmin(AdminDetailsViewModel adminDetails)
+    {
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var result = await _adminService.EditAdminAsync(adminDetails.ToAdminEntityModel());
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (await _adminService.GetByIdAsync(adminDetails.Id) == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(ListAdmins));
+        }
+        return RedirectToAction(nameof(ListAdmins));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DeleteAdmin(long adminId)
+    {
+        adminId.AssertIsNotZero();
+
+        var admin = await _adminService.GetByIdAsync(adminId);
+        if (admin == null)
+        {
+            return NotFound();
+        }
+
+        var adminDetails = new AdminDetailsViewModel(admin);
+        return View(adminDetails);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteAdminConfirmed(long adminId)
+    {
+        await _adminService.DeleteAsync(adminId);
+        return RedirectToAction(nameof(ListAdmins));
     }
 
     #endregion

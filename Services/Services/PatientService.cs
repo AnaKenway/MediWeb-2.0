@@ -18,7 +18,7 @@ public class PatientService : BaseService<Patient>
 
     public async override Task<IList<Patient>> GetAllAsync()
     {
-        return await _set.Include(d => d.UserAccount)
+        return await _set.Include(p => p.UserAccount)
             .Include(p => p.Appointments)
             .ToListAsync();
     }
