@@ -1,0 +1,42 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<AdminDetailsViewModel>
+
+@{
+    ViewBag.Title = "List Admins";
+}
+
+<h1>List Admins</h1>
+
+@if (Model.Any())
+{
+    <div class="mb-4">
+        <a asp-action="RegisterAdmin" class="btn btn-primary">Register Admin</a>
+    </div>
+
+    <table class="table table-hover table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Admin Type</th>
+                <th scope="col" class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var admin in Model)
+            {
+                <tr>
+                    <td>@admin.FirstName</td>
+                    <td>@admin.LastName</td>
+                    <td>@admin.Email</td>
+                    <td>@admin.AdminType</td>
+                    <td class="text-end">
+                        <a asp-action="EditAdmin" asp-route-adminId="@admin.Id" class="btn btn-sm btn-warning">Edit Admin</a>
+                        <a asp-action="DeleteAdmin" asp-route-adminId="@admin.Id" class="btn btn-sm btn-danger">Delete Admin</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

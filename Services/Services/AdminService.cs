@@ -40,6 +40,22 @@ public class AdminService : BaseService<Admin>
             throw new MediWebClientException(MediWebFeature.CRUD, "Admin with given Id doesn't exist.");
     }
 
+    public async Task<Admin> RegisterAdminAccount(Admin admin, string password)
+    {
+        admin.UserAccount.CreatedDate = DateTime.Now;
+
+        var identityResult = await _userManager.CreateAsync(admin.UserAccount, password);
+
+        if (!identityResult.Succeeded)
+        {
+            throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
+        }
+
+        admin.UserAccountId = admin.UserAccount.Id;
+
+        return await AddAsync(admin);
+    }
+
     public async Task<Admin> EditAdminAsync(Admin admin)
     {
         var existingAdmin = await GetByIdAsync(admin.Id) ??
@@ -76,5 +92,5 @@ public class AdminService : BaseService<Admin>
         }
 
         return false;
-    }
+    }   
 }

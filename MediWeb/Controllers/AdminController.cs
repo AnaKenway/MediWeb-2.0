@@ -1,5 +1,4 @@
 ﻿using Common;
-using DataLayer;
 using MediWeb.Models;
 using MediWeb.Services;
 using Microsoft.AspNetCore.Identity;
@@ -161,6 +160,24 @@ public class AdminController : Controller
     {
         var admins = await _adminService.GetAllAsync();
         return View(admins);
+    }
+
+    [HttpGet]
+    public IActionResult RegisterAdmin()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> RegisterAdmin(RegisterAdminViewModel registerModel)
+    {
+        if (ModelState.IsValid)
+        {
+            var admin = await _adminService.RegisterAdminAccount(registerModel.ToEntityModel(), registerModel.Password);
+
+            return RedirectToAction(nameof(ListAdmins));
+        }
+        return View(registerModel);
     }
 
     [HttpGet]
