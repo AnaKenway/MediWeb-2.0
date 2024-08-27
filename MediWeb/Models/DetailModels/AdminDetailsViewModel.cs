@@ -1,5 +1,6 @@
 ﻿using Common;
 using DataLayer;
+using System.Numerics;
 
 namespace MediWeb.Models;
 
@@ -21,6 +22,18 @@ public class AdminDetailsViewModel
     public string LastName { get; set; } = null!;
     public string Email { get; set; }
     public AdminType AdminType { get; set; }
+
+    public static AdminDetailsViewModel CreateViewModelFromEntityModel(Admin admin)
+    {
+        return new AdminDetailsViewModel
+        {
+            Id = admin.Id,
+            FirstName = admin.UserAccount.FirstName,
+            LastName = admin.UserAccount.LastName,
+            Email = admin.UserAccount?.Email,
+            AdminType = admin.AdminType
+        };
+    }
 
     public Admin ToAdminEntityModel()
     {

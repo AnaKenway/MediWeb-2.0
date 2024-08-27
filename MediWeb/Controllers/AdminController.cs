@@ -159,7 +159,8 @@ public class AdminController : Controller
     public async Task<IActionResult> ListAdmins()
     {
         var admins = await _adminService.GetAllAsync();
-        return View(admins);
+        var adminsDetails = admins.Select(a => AdminDetailsViewModel.CreateViewModelFromEntityModel(a));
+        return View(adminsDetails);
     }
 
     [HttpGet]
