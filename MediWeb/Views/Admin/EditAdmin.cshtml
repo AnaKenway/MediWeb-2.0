@@ -1,5 +1,71 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model AdminDetailsViewModel
+@using Common
+@using MediWeb.Helpers
+
 @{
+    ViewData["Title"] = "Edit Admin";
+    var adminTypes = EnumExtensions.GetEnumDescriptions<AdminType>();
+}
+
+<h1 class="my-4">Edit Admin</h1>
+
+<h4 class="mb-3">Admin</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditAdmin" method="post">
+            <div class="mb-3">
+                <input type="hidden" asp-for="Id" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="FirstName" class="form-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="LastName" class="form-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AdminType" class="control-label"></label>
+                <select asp-for="AdminType" class="form-control">
+                    @foreach (var adminType in adminTypes)
+                    {
+                        <option value="@adminType"> @adminType</option>
+                    }
+                </select>
+                <span asp-validation-for="AdminType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .row {
+            margin-bottom: 1rem;
+        }
+    </style>
 }

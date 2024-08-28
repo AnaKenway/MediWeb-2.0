@@ -42,7 +42,7 @@ public class AdminService : BaseService<Admin>
 
     public async Task<Admin> RegisterAdminAccount(Admin admin, string password)
     {
-        admin.UserAccount.CreatedDate = DateTime.Now;
+        admin.UserAccount.CreatedDate = DateTime.UtcNow;
 
         var identityResult = await _userManager.CreateAsync(admin.UserAccount, password);
 

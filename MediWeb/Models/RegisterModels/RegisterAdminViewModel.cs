@@ -14,6 +14,7 @@ public class RegisterAdminViewModel : BaseRegisterViewModel
         admin.UserAccount.FirstName = FirstName;
         admin.UserAccount.LastName = LastName;
         admin.UserAccount.Email = Email;
+        admin.UserAccount.UserName = Email;
 
         return admin;
     }
