@@ -9,11 +9,19 @@ namespace MediWeb.Services;
 public class AdminService : BaseService<Admin>
 { 
     private readonly UserManager<UserAccount> _userManager;
+    private readonly RoleManager<IdentityRole<long>> _roleManager;
+    private readonly IdentityRole<long> _appAdminRole;
+    private readonly IdentityRole<long> _clinicAdminRole;
+    private const long _appAdminRoleId = 1;
+    private const long _clinicAdminRoleId = 2;
 
-    public AdminService(MediWebContext context, UserManager<UserAccount> userManager)
+    public AdminService(MediWebContext context, UserManager<UserAccount> userManager, RoleManager<IdentityRole<long>> roleManager)
         : base(context)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
+        _appAdminRole = _roleManager.FindByIdAsync(_appAdminRoleId.ToString())?.Result ?? new IdentityRole<long>();
+        _clinicAdminRole = _roleManager.FindByIdAsync(_clinicAdminRoleId.ToString())?.Result ?? new IdentityRole<long>();
     }
 
 
@@ -49,6 +57,15 @@ public class AdminService : BaseService<Admin>
         if (!identityResult.Succeeded)
         {
             throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
+        }
+
+        var userRoleResult = admin.AdminType is AdminType.AppAdmin 
+            ? await _userManager.AddToRoleAsync(admin.UserAccount, _appAdminRole.Name)
+            : await _userManager.AddToRoleAsync(admin.UserAccount, _clinicAdminRole.Name);
+
+        if (!userRoleResult.Succeeded)
+        {
+            throw new Exception(userRoleResult.Errors?.FirstOrDefault()?.ToString());
         }
 
         admin.UserAccountId = admin.UserAccount.Id;
