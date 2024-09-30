@@ -10,13 +10,19 @@ namespace MediWeb.Services;
 public class DoctorService : BaseService<Doctor>
 {
     private readonly UserManager<UserAccount> _userManager;
+    private readonly RoleManager<IdentityRole<long>> _roleManager;
     private readonly DoctorClinicsService _doctorClinicsService;
+    private readonly IdentityRole<long> _doctorRole;
+    //In a live project, this would ideally be stored in the config, for example in the KeyVault
+    private const long _doctorRoleId = 4;
 
-    public DoctorService(MediWebContext context, UserManager<UserAccount> userManager, DoctorClinicsService doctorClinicsService)
+    public DoctorService(MediWebContext context, UserManager<UserAccount> userManager, DoctorClinicsService doctorClinicsService, RoleManager<IdentityRole<long>> roleManager)
         : base(context)
     {
         _userManager = userManager;
         _doctorClinicsService = doctorClinicsService;
+        _roleManager = roleManager;
+        _doctorRole = _roleManager.FindByIdAsync(_doctorRoleId.ToString())?.Result ?? new IdentityRole<long>();
     }
 
     public override async Task<IList<Doctor>> GetAllAsync()
@@ -55,6 +61,13 @@ public class DoctorService : BaseService<Doctor>
         if (!identityResult.Succeeded)
         {
             throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
+        }
+
+        var userRoleResult = await _userManager.AddToRoleAsync(user, _doctorRole.Name);
+
+        if (!userRoleResult.Succeeded)
+        {
+            throw new Exception(userRoleResult.Errors?.FirstOrDefault()?.ToString());
         }
 
         var doctor = doctorDetails.CreateDoctorEntityModel();

@@ -10,11 +10,16 @@ namespace MediWeb.Services;
 public class MedicalEmployeeService : BaseService<MedicalEmployee>
 {
     private readonly UserManager<UserAccount> _userManager;
+    private readonly RoleManager<IdentityRole<long>> _roleManager;
+    private readonly IdentityRole<long> _medicalStaffRole;
+    private readonly long _medicalStaffRoleId = 5;
 
-    public MedicalEmployeeService(MediWebContext context, UserManager<UserAccount> userManager)
+    public MedicalEmployeeService(MediWebContext context, UserManager<UserAccount> userManager, RoleManager<IdentityRole<long>> roleManager)
         : base(context)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
+        _medicalStaffRole = _roleManager.FindByIdAsync(_medicalStaffRoleId.ToString())?.Result ?? new IdentityRole<long>();
     }
     public override async Task<IList<MedicalEmployee>> GetAllAsync()
     {
@@ -52,6 +57,13 @@ public class MedicalEmployeeService : BaseService<MedicalEmployee>
         if(!identityResult.Succeeded) 
         {
             throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
+        }
+
+        var userRoleResult = await _userManager.AddToRoleAsync(user, _medicalStaffRole.Name);
+
+        if (!userRoleResult.Succeeded)
+        {
+            throw new Exception(userRoleResult.Errors?.FirstOrDefault()?.ToString());
         }
 
         var medicalEmployee = new MedicalEmployee

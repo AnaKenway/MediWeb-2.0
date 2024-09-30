@@ -12,12 +12,17 @@ public class PatientController : Controller
     private readonly UserManager<UserAccount> _userManager;
     private readonly SignInManager<UserAccount> _signInManager;
     private readonly PatientService _patientService;
+    private readonly RoleManager<IdentityRole<long>> _roleManager;
+    private readonly IdentityRole<long> _patientRole;
+    private readonly long _patientRoleId = 5;
 
-    public PatientController(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager, PatientService patientService)
+    public PatientController(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager, PatientService patientService, RoleManager<IdentityRole<long>> roleManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _patientService = patientService;
+        _roleManager = roleManager;
+        _patientRole = _roleManager.FindByIdAsync(_patientRoleId.ToString())?.Result ?? new IdentityRole<long>();
     }
 
     #region Register and Login
@@ -41,7 +46,14 @@ public class PatientController : Controller
             {
                 var patient = new Patient { Gender = model.Gender, Jmbg = model.Jmbg, DateOfBirth = model.DateOfBirth,
                     PhoneNumber = model.PhoneNumber, UserAccount = user, UserAccountId = user.Id };
-                
+
+                var userRoleResult = await _userManager.AddToRoleAsync(user, _patientRole.Name);
+
+                if (!userRoleResult.Succeeded)
+                {
+                    throw new Exception(userRoleResult.Errors?.FirstOrDefault()?.ToString());
+                }
+
                 await _patientService.AddAsync(patient);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");

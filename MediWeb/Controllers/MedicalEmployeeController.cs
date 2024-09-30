@@ -63,8 +63,6 @@ namespace MediWeb.Controllers
             {
                 var medicalEmployeeDto = model.CreateDTOFromViewModel();
                 var medicalEmployee = await _medicalEmployeeService.RegisterMedicalEmployeeAccount(medicalEmployeeDto, model.Password);
-                
-                await _medicalEmployeeService.AddAsync(medicalEmployee);
                 return RedirectToAction(nameof(Index));                            
             }
             var clinics = await _clinicService.GetAllAsync();
