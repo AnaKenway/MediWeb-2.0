@@ -8,5 +8,5 @@ public partial class Admin
     public AdminType AdminType { get; set; }
 
     public long UserAccountId { get; set; }
-    public virtual UserAccount UserAccount { get; set; } = null!;
+    public virtual UserAccount UserAccount { get; set; } = new UserAccount();
 }

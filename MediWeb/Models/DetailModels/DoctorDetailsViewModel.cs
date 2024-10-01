@@ -16,11 +16,11 @@ public class DoctorDetailsViewModel
 
     [BindProperty]
     public IList<DoctorClinics> DoctorClinics { get; set; } = new List<DoctorClinics>();
-    public IList<Clinic> Clinics { get; set; } = [];
+    public IList<Clinic> Clinics { get; set; } = new List<Clinic>();
     public IList<Specialization> Specializations { get; set; } = [];
 
     public string FullName { get => FirstName + " " + LastName; }
-    public string ClinicNames { get => string.Join(", ", Clinics.Select(c => c.Name)); }
+    public string ClinicNames { get => string.Join(", ", Clinics.Select(c => c?.Name)); }
 
     public static DoctorDetailsViewModel CreateViewModelFromEntityModel(Doctor doctor)
     {

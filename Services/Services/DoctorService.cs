@@ -10,11 +10,19 @@ namespace MediWeb.Services;
 public class DoctorService : BaseService<Doctor>
 {
     private readonly UserManager<UserAccount> _userManager;
+    private readonly RoleManager<IdentityRole<long>> _roleManager;
+    private readonly DoctorClinicsService _doctorClinicsService;
+    private readonly IdentityRole<long> _doctorRole;
+    //In a live project, this would ideally be stored in the config, for example in the KeyVault
+    private const long _doctorRoleId = 4;
 
-    public DoctorService(MediWebContext context, UserManager<UserAccount> userManager)
+    public DoctorService(MediWebContext context, UserManager<UserAccount> userManager, DoctorClinicsService doctorClinicsService, RoleManager<IdentityRole<long>> roleManager)
         : base(context)
     {
         _userManager = userManager;
+        _doctorClinicsService = doctorClinicsService;
+        _roleManager = roleManager;
+        _doctorRole = _roleManager.FindByIdAsync(_doctorRoleId.ToString())?.Result ?? new IdentityRole<long>();
     }
 
     public override async Task<IList<Doctor>> GetAllAsync()
@@ -30,8 +38,9 @@ public class DoctorService : BaseService<Doctor>
         id.AssertIsNotNull();
         id.AssertIsNotZero();
 
-        return await _set.Include(d => d.DoctorClinics)
-            .Include(d => d.UserAccount)
+        return await _set.Include(d => d.UserAccount)
+            .Include(d => d.DoctorClinics)
+            .ThenInclude(dc => dc.Clinic)
             .SingleOrDefaultAsync(d => d.Id == id) ??
             throw new MediWebClientException(MediWebFeature.CRUD, "Object with given Id doesn't exist.");
     }
@@ -54,6 +63,13 @@ public class DoctorService : BaseService<Doctor>
             throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
         }
 
+        var userRoleResult = await _userManager.AddToRoleAsync(user, _doctorRole.Name);
+
+        if (!userRoleResult.Succeeded)
+        {
+            throw new Exception(userRoleResult.Errors?.FirstOrDefault()?.ToString());
+        }
+
         var doctor = doctorDetails.CreateDoctorEntityModel();
         doctor.UserAccountId = user.Id;
 
@@ -74,5 +90,26 @@ public class DoctorService : BaseService<Doctor>
             throw new Exception(identityResult.Errors?.FirstOrDefault()?.ToString());
         }
         return await UpdateAsync(doctor);
+    }
+
+    public override async Task<bool> DeleteAsync(long doctorId)
+    {
+        doctorId.AssertIsNotNull();
+        doctorId.AssertIsNotZero();
+
+        var entity = await GetByIdAsync(doctorId)
+            ?? throw new Exception("Cannot delete the doctor with Id " + doctorId + "because the doctor with that Id could not be found.");
+
+        await _doctorClinicsService.BulkDeleteDoctorClinicsByDoctorIdAsync(doctorId);
+        _set.Remove(entity);
+        await _userManager.DeleteAsync(entity.UserAccount);      
+        var result = await _context.SaveChangesAsync();
+
+        if (result > 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

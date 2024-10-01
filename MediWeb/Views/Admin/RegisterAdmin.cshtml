@@ -1,0 +1,77 @@
+﻿@model RegisterAdminViewModel;
+@using MediWeb.Helpers
+
+@{
+    ViewData["Title"] = "Register Admin";
+    var adminTypes = EnumExtensions.GetEnumDescriptions<Common.AdminType>();
+}
+
+<h1 class="my-4">Register an Admin</h1>
+
+<h4 class="mb-3">Admin</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="RegisterAdmin" method="post">
+            <div class="form-group">
+                <label asp-for="FirstName" class="form-label">First Name</label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="form-label">Last Name</label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AdminType" class="control-label"></label>
+                <select asp-for="AdminType" class="form-control">
+                    @foreach (var adminType in adminTypes)
+                    {
+                        <option value="@adminType"> @adminType</option>
+                    }
+                </select>
+                <span asp-validation-for="AdminType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="control-label">Confirm Password</label>
+                <input asp-for="ConfirmPassword" class="form-control" type="password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Register" class="btn btn-primary" />
+                <a asp-action="ListAdmins" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .row {
+            margin-bottom: 1rem;
+        }
+    </style>
+}

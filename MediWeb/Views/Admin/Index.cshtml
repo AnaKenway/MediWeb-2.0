@@ -35,9 +35,9 @@
     <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
         <div class="card h-100">
             <div class="card-body d-flex flex-column">
-                <h5 class="card-title">Users</h5>
-                <p class="card-text">Manage and view all users.</p>
-                <a href="#" class="btn btn-primary mt-auto">View All Users</a>
+                <h5 class="card-title">Patients</h5>
+                <p class="card-text">Manage and view all patients.</p>
+                <a href="@Url.Action("ListPatients", "Patient")" class="btn btn-primary mt-auto">View All Patients</a>
             </div>
         </div>
     </div>
@@ -47,6 +47,24 @@
                 <h5 class="card-title">Specializations</h5>
                 <p class="card-text">Manage and view all specializations.</p>
                 <a href="@Url.Action("Index", "Specialization")" class="btn btn-primary mt-auto">View All Specializations</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">User Roles</h5>
+                <p class="card-text">Manage and view all user roles.</p>
+                <a href="@Url.Action("ListRoles", "Admin")" class="btn btn-primary mt-auto">View All User Roles</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">Admins</h5>
+                <p class="card-text">Manage and view all admins.</p>
+                <a href="@Url.Action("ListAdmins", "Admin")" class="btn btn-primary mt-auto">View All Admins</a>
             </div>
         </div>
     </div>

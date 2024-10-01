@@ -1,5 +1,4 @@
-﻿using DataLayer;
-using DTOs.UserAccountDTOs;
+﻿using DTOs.UserAccountDTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace MediWeb.Models;
@@ -8,8 +7,6 @@ public class RegisterDoctorViewModel : BaseRegisterViewModel
 {
     [Required]
     public string Title { get; set; }
-
-    public IList<DoctorClinicsViewModel> DoctorClinics { get; set; } = new List<DoctorClinicsViewModel>();
 
     public DoctorDetailsDTO CreateDTOFromRegisterViewModel()
     {

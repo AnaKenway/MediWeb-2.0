@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-
+﻿
 namespace Common;
 
 public enum AdminType
@@ -11,9 +10,7 @@ public enum AdminType
 public enum Gender
 {
     Male = 0,
-    Female = 1,
-    [Description("Rather not disclose")]
-    RatherNotDisclose = 2
+    Female = 1
 }
 
 public enum UserType
