@@ -1,10 +1,12 @@
 ﻿using DataLayer;
 using MediWeb.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediWeb.Controllers;
 
+[Authorize(Roles = "App Admin,Clinic Admin, Medical Staff")]
 public class SpecializationController : Controller
 {
     private readonly SpecializationService _specializationService;

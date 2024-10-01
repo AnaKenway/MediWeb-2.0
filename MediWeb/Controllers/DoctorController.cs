@@ -1,10 +1,12 @@
 ﻿using MediWeb.Models;
 using MediWeb.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MediWeb.Controllers;
 
+[Authorize(Roles = "App Admin,Clinic Admin,Medical Staff")]
 public class DoctorController : Controller
 {
     private readonly DoctorService _doctorService;
