@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MediWeb.Controllers;
 
-[Authorize(Roles = "App Admin,Clinic Admin,Medical Staff")]
+[Authorize(Roles = "App Admin,Clinic Admin,Medical Employee")]
 public class DoctorController : Controller
 {
     private readonly DoctorService _doctorService;

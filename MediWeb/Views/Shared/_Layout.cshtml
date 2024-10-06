@@ -34,20 +34,15 @@
                     <ul class="navbar-nav">
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            @*@if (User.IsInRole("Admin"))
+                            @if (User.IsInRole("App Admin") || User.IsInRole("Clinic Admin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Admin" asp-action="Index">Admin Panel</a>
                                 </li>
+                                
                             }
                             <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="form-inline">
-                                    <button type="submit" class="nav-link btn btn-link">Logout</button>
-                                </form>
-                            </li>
-                            *@
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="Index">Admin Panel</a>
+                                <a class="nav-link" asp-controller="Appointment" asp-action="ManageAppointmentsIndex">Manage Appointments</a>
                             </li>
                             <li class="nav-item">
                                 <form asp-controller="Patient" asp-action="Logout" method="post" id="logoutForm" class="form-inline">

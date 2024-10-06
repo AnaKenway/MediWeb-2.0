@@ -40,6 +40,42 @@ public class MedicalEmployeeService : BaseService<MedicalEmployee>
             .FirstOrDefaultAsync(me => me.Id == id) ??
             throw new MediWebClientException(MediWebFeature.CRUD, "Object with given Id doesn't exist.");
     }
+    
+    public async Task<MedicalEmployee> GetByUserAccountIdAsync(long userAccountId)
+    {
+        userAccountId.AssertIsNotZero();
+
+        return await _set
+            .Include(me => me.Clinic)
+            .Include(me => me.UserAccount)
+            .FirstOrDefaultAsync(me => me.UserAccountId == userAccountId) ??
+            throw new MediWebClientException(MediWebFeature.CRUD, "Object with given Id doesn't exist.");
+    }
+    public async Task<Clinic> GetMedicalEmployeeClinicByUserAccountIdAsync(long id)
+    {
+        id.AssertIsNotNull();
+        id.AssertIsNotZero();
+
+        var medicalEmployee = await _set
+            .Include(me => me.Clinic)
+            .Include(me => me.UserAccount)
+            .FirstOrDefaultAsync(me => me.UserAccountId == id);
+
+        return medicalEmployee?.Clinic ?? throw new MediWebClientException(MediWebFeature.CRUD, "Object with given Id doesn't exist.");
+    }
+
+    public async Task<long> GetMedicalEmployeeClinicIdByUserAccountIdAsync(long id)
+    {
+        id.AssertIsNotNull();
+        id.AssertIsNotZero();
+
+        var medicalEmployee = await _set
+            .Include(me => me.Clinic)
+            .Include(me => me.UserAccount)
+            .FirstOrDefaultAsync(me => me.UserAccountId == id);
+
+        return medicalEmployee?.Clinic?.Id ?? throw new MediWebClientException(MediWebFeature.CRUD, "Object with given Id doesn't exist.");
+    }
 
     public async Task<MedicalEmployee> RegisterMedicalEmployeeAccount(MedicalEmployeeDetailsDTO medicalEmployeeDetails, string password)
     {

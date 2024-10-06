@@ -71,10 +71,7 @@ public partial class MediWebContext : IdentityDbContext<UserAccount, IdentityRol
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.AppointmentSlotId).HasColumnName("appointment_slot_id");
-            entity.Property(e => e.IsApproved)
-                .HasDefaultValueSql("(0)::bit(1)")
-                .HasColumnType("bit(1)")
-                .HasColumnName("is_approved");
+            entity.Property(e => e.AppointmentStatus).HasColumnName("appointment_status");
             entity.Property(e => e.Note)
                 .HasColumnType("character varying")
                 .HasColumnName("note");

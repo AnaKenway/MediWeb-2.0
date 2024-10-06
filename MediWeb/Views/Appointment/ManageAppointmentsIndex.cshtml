@@ -1,0 +1,31 @@
+﻿@model IEnumerable<DoctorDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Doctors";
+}
+
+<h1 class="my-4">Doctors from your Clinic</h1>
+
+<table class="table table-hover table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Full Name</th>
+            <th scope="col">Title</th>
+            <th scope="col">Email</th>
+            <th scope="col" class="text-end">Manage</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var doctor in Model)
+        {
+            <tr>
+                <td>@doctor.FullName</td>
+                <td>@doctor.Title</td>
+                <td>@doctor.Email</td>
+                <td class="text-end">
+                    <a asp-action="ManageAppointmentsCalendar" asp-route-id="@doctor.Id" class="btn btn-sm btn-warning">Manage Appointments</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

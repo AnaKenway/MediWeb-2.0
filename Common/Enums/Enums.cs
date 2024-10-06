@@ -21,6 +21,13 @@ public enum UserType
     Patient = 3
 }
 
+public enum AppointmentStatus
+{
+    Pending = 0,
+    Approved = 1,
+    NotApproved = 2
+}
+
 public enum MediWebFeature
 {
     AccountManagement = 0,
