@@ -33,6 +33,15 @@ public class DoctorService : BaseService<Doctor>
             .ToListAsync();
     }
 
+    public async Task<IList<Doctor>> GetAllDoctorsFromClinic(long clinicId)
+    {
+        clinicId.AssertIsNotNull();
+        return await _set.Include(d => d.UserAccount)
+            .Include(d => d.DoctorClinics)
+            .Where(d => d.DoctorClinics.Any(dc => dc.ClinicId == clinicId))
+            .ToListAsync();
+    }
+
     public override async Task<Doctor> GetByIdAsync(long id)
     {
         id.AssertIsNotNull();
