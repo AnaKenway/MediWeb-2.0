@@ -54,11 +54,17 @@ public partial class MediWebContext : IdentityDbContext<UserAccount, IdentityRol
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.AdminType).HasColumnName("admin_type");
             entity.Property(e => e.UserAccountId).HasColumnName("user_account_id");
+            entity.Property(e => e.ClinicId).HasColumnName("clinic_id");
 
             entity.HasOne(d => d.UserAccount).WithOne(p => p.Admin)
                 .HasForeignKey<Admin>(d => d.UserAccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("admin_user_account_fkey");
+            
+            entity.HasOne(a => a.Clinic).WithMany(c => c.ClinicAdmins)
+                .HasForeignKey(a => a.ClinicId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("admin_clinic_fkey");
         });
 
         modelBuilder.Entity<Appointment>(entity =>

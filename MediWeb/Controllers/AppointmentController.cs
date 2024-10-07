@@ -13,14 +13,16 @@ namespace MediWeb.Controllers;
 public class AppointmentController : Controller
 {
     private readonly DoctorService _doctorService;
+    private readonly AdminService _adminService;
     private readonly UserManager<UserAccount> _userManager;
     private readonly MedicalEmployeeService _medicalEmployeeService;
 
-    public AppointmentController(DoctorService doctorService, UserManager<UserAccount> userManager, MedicalEmployeeService medicalEmployeeService)
+    public AppointmentController(DoctorService doctorService, UserManager<UserAccount> userManager, MedicalEmployeeService medicalEmployeeService, AdminService adminService)
     {
         _doctorService = doctorService;
         _userManager = userManager;
         _medicalEmployeeService = medicalEmployeeService;
+        _adminService = adminService;
     }
 
     // GET: ManageAppointmentsIndex
@@ -28,6 +30,7 @@ public class AppointmentController : Controller
     public async Task<IActionResult> ManageAppointmentsIndex()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        long clinicId = 0;
         IList<Doctor> doctors = new List<Doctor>();
         IEnumerable<DoctorDetailsViewModel> doctorsDetails = new List<DoctorDetailsViewModel>();
 
@@ -37,19 +40,30 @@ public class AppointmentController : Controller
             return View();
         }
 
-        var medicalEmployeeClinicId = await _medicalEmployeeService.GetMedicalEmployeeClinicIdByUserAccountIdAsync(long.Parse(userId));
-
-        if(medicalEmployeeClinicId == 0)
+        if (User.IsInRole("App Admin"))
         {
-            //Error handling
-            //This could also mean that it's an app admin trying to manage content
-            //Since the App Admin doesn't belong to any specific clinc
             doctors = await _doctorService.GetAllAsync();
+            doctorsDetails = doctors.Select(DoctorDetailsViewModel.CreateViewModelFromEntityModel);
             return View(doctorsDetails);
         }
 
-        doctors = await _doctorService.GetAllDoctorsFromClinic(medicalEmployeeClinicId);
+        if (User.IsInRole("Clinic Admin"))
+        {
+            clinicId = await _adminService.GetClinicAdminClinicIdByUserAccountIdAsync(long.Parse(userId));
+        }
+        else if(User.IsInRole("Medical Employee"))
+        {
+            clinicId = await _medicalEmployeeService.GetMedicalEmployeeClinicIdByUserAccountIdAsync(long.Parse(userId));
+        }
+       
+        if(clinicId == 0)
+        {           
+            //error handling
+            return View();
+        }
+
+        doctors = await _doctorService.GetAllDoctorsFromClinic(clinicId);
         doctorsDetails = doctors.Select(DoctorDetailsViewModel.CreateViewModelFromEntityModel);
         return View(doctorsDetails);
-    }
+    }  
 }

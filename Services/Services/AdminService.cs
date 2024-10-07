@@ -109,5 +109,19 @@ public class AdminService : BaseService<Admin>
         }
 
         return false;
-    }   
+    }
+
+    public async Task<long> GetClinicAdminClinicIdByUserAccountIdAsync(long userAccountId)
+    {
+        userAccountId.AssertIsNotNull();
+        userAccountId.AssertIsNotZero();
+
+        var clinicAdmin = await _set
+            .Include(a => a.Clinic)
+            .Include(a => a.UserAccount)
+            .FirstOrDefaultAsync(a => a.UserAccountId == userAccountId);
+
+        return clinicAdmin?.Clinic?.Id ?? throw new MediWebClientException(MediWebFeature.CRUD, "Object with given Id doesn't exist.");
+    }
+
 }

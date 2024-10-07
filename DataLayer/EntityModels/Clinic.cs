@@ -18,5 +18,7 @@ public partial class Clinic
 
     public virtual ICollection<DoctorClinics> DoctorClinics { get; set; } = [];
     public virtual ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
+
+    public virtual ICollection<Admin> ClinicAdmins { get; set; } = new List<Admin>();
     
 }

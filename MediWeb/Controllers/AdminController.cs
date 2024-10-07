@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MediWeb.Controllers;
 
-[Authorize(Roles = "App Admin")]
+[Authorize(Roles = "App Admin, Clinic Admin")]
 public class AdminController : Controller
 {
     private readonly RoleManager<IdentityRole<long>> _roleManager;

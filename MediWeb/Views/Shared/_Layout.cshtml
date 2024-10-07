@@ -39,11 +39,17 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Admin" asp-action="Index">Admin Panel</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Appointment" asp-action="ManageAppointmentsIndex">Manage Appointments</a>
+                                </li>
                                 
                             }
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Appointment" asp-action="ManageAppointmentsIndex">Manage Appointments</a>
-                            </li>
+                            @if (User.IsInRole("Medical Employee"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Appointment" asp-action="ManageAppointmentsIndex">Manage Appointments</a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <form asp-controller="Patient" asp-action="Logout" method="post" id="logoutForm" class="form-inline">
                                     <button type="submit" class="nav-link btn btn-link">Logout</button>
