@@ -14,7 +14,7 @@ public class PatientController : Controller
     private readonly PatientService _patientService;
     private readonly RoleManager<IdentityRole<long>> _roleManager;
     private readonly IdentityRole<long> _patientRole;
-    private readonly long _patientRoleId = 5;
+    private readonly long _patientRoleId = 6;
 
     public PatientController(UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager, PatientService patientService, RoleManager<IdentityRole<long>> roleManager)
     {
